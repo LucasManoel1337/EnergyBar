@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,94 +70,94 @@ public class TelaProdutos extends JPanel {
         tabelaProdutos.getColumnModel().getColumn(5).setPreferredWidth(25);
         tabelaProdutos.getColumnModel().getColumn(6).setPreferredWidth(25);
 
-// Usando TableRowSorter para ordenar numericamente a coluna ID
-TableRowSorter<TableModel> sorter = new TableRowSorter<>(modeloTabela);
-tabelaProdutos.setRowSorter(sorter);
+        // Usando TableRowSorter para ordenar numericamente a coluna ID
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(modeloTabela);
+        tabelaProdutos.setRowSorter(sorter);
 
-// Definir o tipo de comparação para a coluna ID (coluna 0)
-sorter.setComparator(0, (o1, o2) -> {
-    try {
-        int id1 = Integer.parseInt(o1.toString());
-        int id2 = Integer.parseInt(o2.toString());
-        return Integer.compare(id1, id2); // Comparação numérica
-    } catch (NumberFormatException e) {
-        return 0; // Em caso de erro de conversão
-    }
-});
-        
-    tabelaProdutos.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        
-        cellComponent.setFont(new Font("Arial", Font.BOLD, 14)); // Define a fonte desejada
-        // Regra para a coluna "Estoque" (índice 3)
-        if (column == 3) {
+        // Definir o tipo de comparação para a coluna ID (coluna 0)
+        sorter.setComparator(0, (o1, o2) -> {
             try {
-                int estoque = Integer.parseInt(value.toString());
+                int id1 = Integer.parseInt(o1.toString());
+                int id2 = Integer.parseInt(o2.toString());
+                return Integer.compare(id1, id2); // Comparação numérica
+            } catch (NumberFormatException e) {
+                return 0; // Em caso de erro de conversão
+            }
+        });
+        
+        tabelaProdutos.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        
+            cellComponent.setFont(new Font("Arial", Font.BOLD, 14)); // Define a fonte desejada
+            // Regra para a coluna "Estoque" (índice 3)
+            if (column == 3) {
+                try {
+                    int estoque = Integer.parseInt(value.toString());
                 
-                // Se o estoque for menor ou igual a 5, colorir a célula de vermelho
-                if (estoque <= 5) {
-                    cellComponent.setBackground(Color.RED);
-                    cellComponent.setForeground(Color.WHITE); // Texto em branco
-                } else {
+                    // Se o estoque for menor ou igual a 5, colorir a célula de vermelho
+                    if (estoque <= 5) {
+                        cellComponent.setBackground(Color.RED);
+                        cellComponent.setForeground(Color.WHITE); // Texto em branco
+                    } else {
+                        cellComponent.setBackground(Color.LIGHT_GRAY);
+                        cellComponent.setForeground(Color.BLACK); // Texto em preto
+                    }
+                } catch (Exception e) {
+                    // Caso ocorra algum erro (valor inválido), mantemos a célula com a cor padrão
                     cellComponent.setBackground(Color.LIGHT_GRAY);
                     cellComponent.setForeground(Color.BLACK); // Texto em preto
                 }
-            } catch (Exception e) {
-                // Caso ocorra algum erro (valor inválido), mantemos a célula com a cor padrão
-                cellComponent.setBackground(Color.LIGHT_GRAY);
-                cellComponent.setForeground(Color.BLACK); // Texto em preto
-            }
-        } 
+            } 
         // Regra para a coluna "Validade" (índice 4)
-else if (column == 4) {
-    try {
-        String validadeStr = value.toString();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date validadeDate = dateFormat.parse(validadeStr);
+            else if (column == 4) {
+                try {
+                    String validadeStr = value.toString();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    Date validadeDate = dateFormat.parse(validadeStr);
 
-        // Obtendo a data atual sem horas, minutos e segundos
-        Calendar hoje = Calendar.getInstance();
-        hoje.set(Calendar.HOUR_OF_DAY, 0);
-        hoje.set(Calendar.MINUTE, 0);
-        hoje.set(Calendar.SECOND, 0);
-        hoje.set(Calendar.MILLISECOND, 0);
-        Date currentDate = hoje.getTime();
+                    // Obtendo a data atual sem horas, minutos e segundos
+                    Calendar hoje = Calendar.getInstance();
+                    hoje.set(Calendar.HOUR_OF_DAY, 0);
+                    hoje.set(Calendar.MINUTE, 0);
+                    hoje.set(Calendar.SECOND, 0);
+                    hoje.set(Calendar.MILLISECOND, 0);
+                    Date currentDate = hoje.getTime();
 
-        // Calculando a diferença em dias entre a validade e a data atual
-        long diffInMillies = validadeDate.getTime() - currentDate.getTime();
-        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    // Calculando a diferença em dias entre a validade e a data atual
+                    long diffInMillies = validadeDate.getTime() - currentDate.getTime();
+                    long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
-        if (validadeDate.before(currentDate) || diffInDays == 0) {
-            // Se já venceu ou vence hoje, cor preta com texto branco
-            cellComponent.setBackground(Color.BLACK);
-            cellComponent.setForeground(Color.WHITE);
-        } else if (diffInDays < 30) {
-            // Se a validade for menor que 30 dias, cor vermelha com texto branco
-            cellComponent.setBackground(Color.RED);
-            cellComponent.setForeground(Color.WHITE);
-        } else {
-            // Caso contrário, mantém a cor padrão
-            cellComponent.setBackground(Color.LIGHT_GRAY);
-            cellComponent.setForeground(Color.BLACK);
-        }
+                    if (validadeDate.before(currentDate) || diffInDays == 0) {
+                        // Se já venceu ou vence hoje, cor preta com texto branco
+                        cellComponent.setBackground(Color.BLACK);
+                        cellComponent.setForeground(Color.WHITE);
+                    } else if (diffInDays < 30) {
+                        // Se a validade for menor que 30 dias, cor vermelha com texto branco
+                        cellComponent.setBackground(Color.RED);
+                        cellComponent.setForeground(Color.WHITE);
+                    } else {
+                        // Caso contrário, mantém a cor padrão
+                        cellComponent.setBackground(Color.LIGHT_GRAY);
+                        cellComponent.setForeground(Color.BLACK);
+                    }
 
-    } catch (Exception e) {
-        // Caso ocorra erro no formato da data, mantém a cor padrão
-        cellComponent.setBackground(Color.LIGHT_GRAY);
-        cellComponent.setForeground(Color.BLACK);
-    }
-        } else {
-            // Para as outras células, mantém a cor padrão
-            cellComponent.setBackground(Color.LIGHT_GRAY);
-            cellComponent.setForeground(Color.BLACK);
-        }
+                } catch (Exception e) {
+                    // Caso ocorra erro no formato da data, mantém a cor padrão
+                    cellComponent.setBackground(Color.LIGHT_GRAY);
+                    cellComponent.setForeground(Color.BLACK);
+                }
+            } else {
+                // Para as outras células, mantém a cor padrão
+                cellComponent.setBackground(Color.LIGHT_GRAY);
+                cellComponent.setForeground(Color.BLACK);
+            }
 
-        // Garantir que a cor de fundo seja mantida, mesmo ao selecionar a célula
-        if (isSelected) {
-            cellComponent.setBackground(cellComponent.getBackground().darker());
-        }
+            // Garantir que a cor de fundo seja mantida, mesmo ao selecionar a célula
+            if (isSelected) {
+                cellComponent.setBackground(cellComponent.getBackground().darker());
+            }
         
         return cellComponent;
     }

@@ -98,7 +98,11 @@ public class EnergyBarApp {
     }
 
     private void configurarTelas() throws ParseException {
-        telaInicio = new TelaInicio();
+        try {
+            telaInicio = new TelaInicio();
+        } catch (Exception e) {
+            System.err.println("Erro ao criar a tela inicial: " + e.getMessage());
+        }
         telaProdutos = new TelaProdutos(this); // Passa "this" para TelaProdutos
         telaVendas = new TelaVendas();
         telaEntradas = new TelaEntradas();
@@ -109,6 +113,7 @@ public class EnergyBarApp {
 
     private void configurarBotoes() throws ParseException {
         bInicio = criarBotao("INICIO", telaInicio);
+        bInicio.setBackground(corSelecionada);
         bProdutos = criarBotao("PRODUTOS", telaProdutos);
         bVendas = criarBotao("VENDAS", telaVendas);
         bEntradas = criarBotao("ENTRADAS", telaEntradas);
