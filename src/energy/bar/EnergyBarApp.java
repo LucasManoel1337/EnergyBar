@@ -35,16 +35,15 @@ public class EnergyBarApp {
 
     private JLabel labelDataHora;
 
-    private BotaoPersonalizado bInicio, bProdutos, bVendas, bEntradas, bSaidas, bAnotacoes, bCadastrarProduto; // Adicionado botão de cadastro
+    private BotaoPersonalizado bInicio, bProdutos, bVendas, bSaidas, bRelatorios; // Adicionado botão de cadastro
     private Font fontePadrao = new Font("Arial", Font.BOLD, 20);
     private Color corPadrao = Color.WHITE;
     private Color corSelecionada = new Color(180, 155, 183);
 
     private TelaInicio telaInicio;
     private TelaVendas telaVendas;
-    private TelaEntradas telaEntradas;
     private TelaSaidas telaSaidas;
-    private TelaAnotacoes telaAnotacoes;
+    private TelaRelatorios telaRelatorios;
 
     public EnergyBarApp() throws ParseException {
         telaCadastrarProduto = new TelaCadastrarProduto(this); // Passe "this" para TelaCadastrarProduto
@@ -81,7 +80,7 @@ public class EnergyBarApp {
 
     private void configurarPainelFaixa() {
         painelFaixa = new PainelFaixa();
-        painelFaixa.setLayout(new GridLayout(8, 1, 5, 10));
+        painelFaixa.setLayout(new GridLayout(7, 1, 5, 10));
 
         javax.swing.Timer timer = new javax.swing.Timer(1000, e -> atualizarDataHora());
         timer.start();
@@ -98,16 +97,15 @@ public class EnergyBarApp {
     }
 
     private void configurarTelas() throws ParseException {
+        telaInicio = new TelaInicio();
+        telaProdutos = new TelaProdutos(this); // Passa "this" para TelaProdutos
+        telaVendas = new TelaVendas();
+        telaSaidas = new TelaSaidas();
         try {
-            telaInicio = new TelaInicio();
+            telaRelatorios = new TelaRelatorios();
         } catch (Exception e) {
             System.err.println("Erro ao criar a tela inicial: " + e.getMessage());
         }
-        telaProdutos = new TelaProdutos(this); // Passa "this" para TelaProdutos
-        telaVendas = new TelaVendas();
-        telaEntradas = new TelaEntradas();
-        telaSaidas = new TelaSaidas();
-        telaAnotacoes = new TelaAnotacoes();
     }
 
 
@@ -116,16 +114,14 @@ public class EnergyBarApp {
         bInicio.setBackground(corSelecionada);
         bProdutos = criarBotao("PRODUTOS", telaProdutos);
         bVendas = criarBotao("VENDAS", telaVendas);
-        bEntradas = criarBotao("ENTRADAS", telaEntradas);
         bSaidas = criarBotao("SAIDAS", telaSaidas);
-        bAnotacoes = criarBotao("ANOTAÇÕES", telaAnotacoes);
+        bRelatorios = criarBotao("RELATORIOS", telaRelatorios);
 
         painelFaixa.add(bInicio);
         painelFaixa.add(bProdutos);
         painelFaixa.add(bVendas);
-        painelFaixa.add(bEntradas);
         painelFaixa.add(bSaidas);
-        painelFaixa.add(bAnotacoes);
+        painelFaixa.add(bRelatorios);
 
         labelDataHora = new JLabel(obterDataHoraAtual(), SwingConstants.CENTER);
         labelDataHora.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -152,9 +148,8 @@ public class EnergyBarApp {
         bInicio.desmarcar();
         bProdutos.desmarcar();
         bVendas.desmarcar();
-        bEntradas.desmarcar();
         bSaidas.desmarcar();
-        bAnotacoes.desmarcar();
+        bRelatorios.desmarcar();
     }
 
     private void atualizarTela(JPanel novaTela) {

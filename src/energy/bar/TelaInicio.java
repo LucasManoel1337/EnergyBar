@@ -1,112 +1,21 @@
 package energy.bar;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.Font;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Scanner;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 class TelaInicio extends JPanel {
-
-    private double valorDoEstoque;
-    private JLabel lValorDeEstoque;
-
-    public TelaInicio() throws IOException {
-        setLayout(null);
-
-        // Título principal
-        JLabel EnergyBar = new JLabel("ENERGY BAR", JLabel.CENTER);
+    public TelaInicio() {
+        setLayout(new BorderLayout());
+        
+        JLabel EnergyBar = new JLabel("ENERGY BAR", SwingConstants.CENTER);
         EnergyBar.setFont(new Font("Arial", Font.BOLD, 32));
-        EnergyBar.setBounds(250, 20, 300, 40); // Define posição e tamanho
-        add(EnergyBar, SwingConstants.CENTER);
+        add(EnergyBar, BorderLayout.PAGE_START);
         
-        JLabel lPesquisaVazio = new JLabel("Valor total de estoque");
-        lPesquisaVazio.setFont(new Font("Arial", Font.BOLD, 16));
-        lPesquisaVazio.setBounds(75, 75, 550, 40); // Define posição e tamanho
-        lPesquisaVazio.setForeground(Color.BLACK);
-        lPesquisaVazio.setVisible(true);
-        add(lPesquisaVazio);
-        valorDoEstoque = calcularValorTotalEstoque("Estoque de produtos");
-
-        // Label for stock value
-        lValorDeEstoque = new JLabel("R$ " + valorDoEstoque, JLabel.CENTER);
-        lValorDeEstoque.setFont(new Font("Arial", Font.BOLD, 32));
-        lValorDeEstoque.setBounds(10, 100, 300, 40); // Define posição e tamanho
-        add(lValorDeEstoque, SwingConstants.CENTER);
-        
-        JButton bAtualizar = new JButton("Atualizar dados");
-        bAtualizar.setFont(new Font("Arial", Font.BOLD, 14));
-        bAtualizar.setBounds(590, 460, 160, 30);
-        bAtualizar.setBackground(new Color(32, 3, 3));
-        bAtualizar.setForeground(Color.WHITE);
-        bAtualizar.setFocusPainted(false);
-        bAtualizar.setBorderPainted(false);
-        bAtualizar.setVisible(true);
-        bAtualizar.addActionListener(e -> {
-    try {
-        double novoValorTotal = calcularValorTotalEstoque("Estoque de produtos");
-        // Verificar se o valor calculado é válido
-        if (novoValorTotal >= 0) {
-            lValorDeEstoque.setText("R$ " + novoValorTotal);
-        } else {
-            System.err.println("Valor total do estoque é negativo ou inválido.");
-        }
-    } catch (IOException ex) {
-        System.err.println("Erro ao atualizar o valor do estoque: " + ex.getMessage());
+        JLabel label = new JLabel("Tela Inicio", SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 30));
+        add(label, BorderLayout.CENTER);
     }
-});
-        add(bAtualizar);
-    }
-
-    public static double calcularValorTotalEstoque(String caminhoPasta) throws IOException {
-    BigDecimal valorTotal = BigDecimal.ZERO;
-    File pasta = new File(caminhoPasta);
-    File[] arquivos = pasta.listFiles();
-
-    if (arquivos != null) {
-        for (File arquivo : arquivos) {
-            if (arquivo.isFile() && arquivo.getName().endsWith(".txt")) {
-                try (Scanner scanner = new Scanner(new FileReader(arquivo))) {
-                    BigDecimal valorCusto = BigDecimal.ZERO;
-                    int estoqueTotal = 0;
-                    
-                    while (scanner.hasNextLine()) {
-                        String linha = scanner.nextLine();
-                        if (linha.startsWith("Valor de Custo: ")) {
-                            String valorCustoStr = linha.substring(14).trim();
-                            // Remover todos os caracteres não numéricos e vírgulas
-                            valorCustoStr = valorCustoStr.replaceAll("[^0-9,.]", "");
-                            try {
-                                // Converter para BigDecimal para garantir precisão
-                                valorCusto = new BigDecimal(valorCustoStr.replace(",", "."));
-                            } catch (NumberFormatException e) {
-                                System.err.println("Erro ao converter valor de custo para número: " + valorCustoStr + " no arquivo " + arquivo.getName());
-                            }
-                        }
-                        if (linha.startsWith("Estoque: ")) {
-                            try {
-                                estoqueTotal += Integer.parseInt(linha.substring(9).trim()); // Somando os estoques de todos os lotes
-                            } catch (NumberFormatException e) {
-                                System.err.println("Erro ao converter quantidade de estoque para número: " + linha + " no arquivo " + arquivo.getName());
-                            }
-                        }
-                    }
-                    
-                    // Agora, calcular o valor total para todos os lotes do produto
-                    BigDecimal valorProduto = valorCusto.multiply(BigDecimal.valueOf(estoqueTotal));
-                    valorTotal = valorTotal.add(valorProduto);
-                    
-                }
-            }
-        }
-    }
-
-    return valorTotal.doubleValue();
-}
 }

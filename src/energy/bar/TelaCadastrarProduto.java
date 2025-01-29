@@ -361,6 +361,7 @@ public class TelaCadastrarProduto extends JPanel {
                     campoValorDeVenda.setText("");
         
                     lIdNaoExistente.setVisible(true);
+                    campoNomeProduto.setEnabled(true);
                     return;
                 }
 
