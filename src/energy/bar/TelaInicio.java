@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -66,35 +65,48 @@ class TelaInicio extends JPanel {
     }
 
     public static double calcularValorTotalEstoque(String caminhoPasta) throws IOException {
-        BigDecimal valorTotal = BigDecimal.ZERO;
-        File pasta = new File(caminhoPasta);
-        File[] arquivos = pasta.listFiles();
+    BigDecimal valorTotal = BigDecimal.ZERO;
+    File pasta = new File(caminhoPasta);
+    File[] arquivos = pasta.listFiles();
 
-        if (arquivos != null) {
-            for (File arquivo : arquivos) {
-                if (arquivo.isFile() && arquivo.getName().endsWith(".txt")) {
-                    try (Scanner scanner = new Scanner(new FileReader(arquivo))) {
-                        while (scanner.hasNextLine()) {
-                            String linha = scanner.nextLine();
-                            if (linha.startsWith("Valor de Custo: ")) {
-                                String valorCustoStr = linha.substring(14).trim();
-                                // Remover todos os caracteres não numéricos e vírgulas
-                                valorCustoStr = valorCustoStr.replaceAll("[^0-9,.]", "");
-                                try {
-                                    // Converter para BigDecimal para garantir precisão
-                                    BigDecimal valor = new BigDecimal(valorCustoStr.replace(",", "."));
-                                    valorTotal = valorTotal.add(valor);
-                                } catch (NumberFormatException e) {
-                                    System.err.println("Erro ao converter valor de custo para número: " + valorCustoStr + " no arquivo " + arquivo.getName());
-                                }
-                                break;
+    if (arquivos != null) {
+        for (File arquivo : arquivos) {
+            if (arquivo.isFile() && arquivo.getName().endsWith(".txt")) {
+                try (Scanner scanner = new Scanner(new FileReader(arquivo))) {
+                    BigDecimal valorCusto = BigDecimal.ZERO;
+                    int estoqueTotal = 0;
+                    
+                    while (scanner.hasNextLine()) {
+                        String linha = scanner.nextLine();
+                        if (linha.startsWith("Valor de Custo: ")) {
+                            String valorCustoStr = linha.substring(14).trim();
+                            // Remover todos os caracteres não numéricos e vírgulas
+                            valorCustoStr = valorCustoStr.replaceAll("[^0-9,.]", "");
+                            try {
+                                // Converter para BigDecimal para garantir precisão
+                                valorCusto = new BigDecimal(valorCustoStr.replace(",", "."));
+                            } catch (NumberFormatException e) {
+                                System.err.println("Erro ao converter valor de custo para número: " + valorCustoStr + " no arquivo " + arquivo.getName());
+                            }
+                        }
+                        if (linha.startsWith("Estoque: ")) {
+                            try {
+                                estoqueTotal += Integer.parseInt(linha.substring(9).trim()); // Somando os estoques de todos os lotes
+                            } catch (NumberFormatException e) {
+                                System.err.println("Erro ao converter quantidade de estoque para número: " + linha + " no arquivo " + arquivo.getName());
                             }
                         }
                     }
+                    
+                    // Agora, calcular o valor total para todos os lotes do produto
+                    BigDecimal valorProduto = valorCusto.multiply(BigDecimal.valueOf(estoqueTotal));
+                    valorTotal = valorTotal.add(valorProduto);
+                    
                 }
             }
         }
-
-        return valorTotal.doubleValue();
     }
+
+    return valorTotal.doubleValue();
+}
 }

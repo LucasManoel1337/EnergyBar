@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,7 +34,7 @@ public class TelaProdutos extends JPanel {
     private EnergyBarApp mainApp;
     
     // Tabela de produtos
-        String[] colunas = {"ID", "Produto", "Responsável", "Estoque", "Validade", "Custo", "Venda"};
+        String[] colunas = {"ID", "Produto", "Resp.", "Qnt", "Validade", "Custo", "Venda", "Lote"};
         DefaultTableModel modeloTabela = new DefaultTableModel(colunas, 0);
         
         JTable tabelaProdutos = new JTable(modeloTabela);
@@ -63,12 +62,10 @@ public class TelaProdutos extends JPanel {
         tabelaProdutos.setRowHeight(30); // Ajustando a altura das linhas
         tabelaProdutos.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1)); // Bordas da tabela
         tabelaProdutos.getColumnModel().getColumn(0).setPreferredWidth(10);
-        tabelaProdutos.getColumnModel().getColumn(1).setPreferredWidth(230);
-        tabelaProdutos.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tabelaProdutos.getColumnModel().getColumn(3).setPreferredWidth(30);
-        tabelaProdutos.getColumnModel().getColumn(4).setPreferredWidth(40);
-        tabelaProdutos.getColumnModel().getColumn(5).setPreferredWidth(25);
-        tabelaProdutos.getColumnModel().getColumn(6).setPreferredWidth(25);
+        tabelaProdutos.getColumnModel().getColumn(5).setPreferredWidth(20);
+        tabelaProdutos.getColumnModel().getColumn(6).setPreferredWidth(20);
+        tabelaProdutos.getColumnModel().getColumn(3).setPreferredWidth(8);
+        
 
         // Usando TableRowSorter para ordenar numericamente a coluna ID
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(modeloTabela);
@@ -305,38 +302,54 @@ public class TelaProdutos extends JPanel {
     }
     
     public void carregarProdutos(DefaultTableModel modeloTabela) {
-        File diretorio = new File("Estoque de produtos");
-        if (diretorio.exists() && diretorio.isDirectory()) {
-            File[] arquivos = diretorio.listFiles((dir, name) -> name.endsWith(".txt"));
-            if (arquivos != null) {
-                for (File arquivo : arquivos) {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-                        String id = arquivo.getName().replace(".txt", "");
-                        String nome = "", responsavel = "", estoque = "", validade = "", custo = "", venda = "";
-                        String linha;
+    File diretorio = new File("Estoque de produtos");
+    if (diretorio.exists() && diretorio.isDirectory()) {
+        File[] arquivos = diretorio.listFiles((dir, name) -> name.endsWith(".txt"));
+        if (arquivos != null) {
+            for (File arquivo : arquivos) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+                    String nomeProduto = "", responsavel = "", estoque = "", validade = "", custo = "", venda = "";
+                    String lote = "", dataCadastro = "";
+                    String linha;
 
-                        while ((linha = reader.readLine()) != null) {
-                            if (linha.startsWith("Nome do Produto: ")) {
-                                nome = linha.replace("Nome do Produto: ", "").trim();
-                            } else if (linha.startsWith("Responsável: ")) {
-                                responsavel = linha.replace("Responsável: ", "").trim();
-                            } else if (linha.startsWith("Estoque: ")) {
-                                estoque = linha.replace("Estoque: ", "").trim();
-                            } else if (linha.startsWith("Validade: ")) {
-                                validade = linha.replace("Validade: ", "").trim();
-                            } else if (linha.startsWith("Valor de Custo: ")) {
-                                custo = linha.replace("Valor de Custo: ", "").trim();
-                            } else if (linha.startsWith("Valor de Venda: ")) {
-                                venda = linha.replace("Valor de Venda: ", "").trim();
-                            }
+                    while ((linha = reader.readLine()) != null) {
+                        // Verifica os dados do produto
+                        if (linha.startsWith("Nome do Produto: ")) {
+                            nomeProduto = linha.replace("Nome do Produto: ", "").trim();
+                        } else if (linha.startsWith("Responsável: ")) {
+                            responsavel = linha.replace("Responsável: ", "").trim();
+                        } else if (linha.startsWith("Estoque: ")) {
+                            estoque = linha.replace("Estoque: ", "").trim();
+                        } else if (linha.startsWith("Validade: ")) {
+                            validade = linha.replace("Validade: ", "").trim();
+                        } else if (linha.startsWith("Valor de Custo: ")) {
+                            custo = linha.replace("Valor de Custo: ", "").trim();
+                        } else if (linha.startsWith("Valor de Venda: ")) {
+                            venda = linha.replace("Valor de Venda: ", "").trim();
+                        } else if (linha.startsWith("Lote: ")) {
+                            lote = linha.replace("Lote: ", "").trim();
+                        } else if (linha.startsWith("Data e Hora de Cadastro: ")) {
+                            dataCadastro = linha.replace("Data e Hora de Cadastro: ", "").trim();
+                            
+                            // Adiciona uma nova linha para cada lote encontrado
+                            modeloTabela.addRow(new Object[]{
+                                arquivo.getName().replace(".txt", ""), // ID (nome do arquivo sem a extensão)
+                                nomeProduto,
+                                responsavel,
+                                estoque,
+                                validade,
+                                custo,
+                                venda,
+                                lote,
+                                dataCadastro
+                            });
                         }
-
-                        modeloTabela.addRow(new Object[]{id, nome, responsavel, estoque, validade, custo, venda});
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
+}
 }
