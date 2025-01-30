@@ -41,7 +41,6 @@ public class Diretorios {
 
     // Método para verificar e criar diretórios
     public void verificarOuCriarDiretorios() {
-        verificarOuCriarDiretorio(dirFonteEnergyBar);
         verificarOuCriarDiretorio(dirEstoque);
         verificarOuCriarDiretorio(dirLucroLiquido30h);
         verificarOuCriarDiretorio(dirLucroLiquido7h);

@@ -236,15 +236,14 @@ public class TelaProdutos extends JPanel {
 
         bPesquisar.addActionListener(e -> {
             lIdNaoExistente.setVisible(false);
-            String pesquisa = campoPesquisa.getText().trim();
+            String pesquisa = campoPesquisa.getText().trim().toLowerCase(); // Normaliza para minúsculas
+
             if (pesquisa.isEmpty()) {
                 lPesquisaVazio.setVisible(true);
             } else {
-                // Limpa a tabela antes de preencher
                 lPesquisaVazio.setVisible(false);
-                modeloTabela.setRowCount(0);
+                modeloTabela.setRowCount(0); // Limpa a tabela antes de preencher
 
-                // Lê os produtos e filtra pela pesquisa
                 File diretorio = new File(dir.getDirEstoque());
                 if (!diretorio.exists()) {
                     JOptionPane.showMessageDialog(this, "Diretório de estoque não encontrado.");
@@ -253,12 +252,17 @@ public class TelaProdutos extends JPanel {
 
                 File[] arquivos = diretorio.listFiles((dir, name) -> name.endsWith(".txt"));
                 boolean produtoEncontrado = false;
+
                 for (File arquivo : arquivos) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
                         String linha;
-                        String id = "", nome = "", responsavel = "", estoque = "", validade = "", valorCusto = "", valorVenda = "";
+                        String id = arquivo.getName().replace(".txt", ""); // ID = Nome do arquivo sem ".txt"
+                        String nome = "", responsavel = "", estoque = "";
+                        String validade = "", valorCusto = "", valorVenda = "", lote = "";
 
                         while ((linha = reader.readLine()) != null) {
+                            linha = linha.trim();
+
                             if (linha.startsWith("Nome do Produto: ")) {
                                 nome = linha.replace("Nome do Produto: ", "").trim();
                             } else if (linha.startsWith("Responsável: ")) {
@@ -266,19 +270,37 @@ public class TelaProdutos extends JPanel {
                             } else if (linha.startsWith("Estoque: ")) {
                                 estoque = linha.replace("Estoque: ", "").trim();
                             } else if (linha.startsWith("Validade: ")) {
-                                validade = linha.replace("Validade: ", "").trim();
+                                // Se já havia uma validade lida, significa que um novo lote começou,
+                                // então adicionamos o lote anterior antes de sobrescrever as variáveis.
+                                if (!validade.isEmpty()) {
+                                    if (id.toLowerCase().contains(pesquisa) || nome.toLowerCase().contains(pesquisa)) {
+                                        produtoEncontrado = true;
+                                        lIdNaoExistente.setVisible(false);
+
+                                        // Adiciona o lote anterior antes de sobrescrever as variáveis
+                                        modeloTabela.addRow(new Object[]{id, nome, responsavel, estoque, validade, valorCusto, valorVenda, lote});
+                                    }
+                                }
+                                validade = linha.replace("Validade: ", "").trim(); // Atualiza a validade
+                                valorCusto = ""; // Reseta os valores para garantir que o próximo lote não herde o anterior
+                                valorVenda = "";
                             } else if (linha.startsWith("Valor de Custo: ")) {
                                 valorCusto = linha.replace("Valor de Custo: ", "").trim();
                             } else if (linha.startsWith("Valor de Venda: ")) {
                                 valorVenda = linha.replace("Valor de Venda: ", "").trim();
+                            } else if (linha.startsWith("Lote: ")) {
+                                lote = linha.replace("Lote: ", "").trim();
                             }
                         }
 
-                        // Se a pesquisa for por nome ou id, verificar
-                        if (nome.contains(pesquisa) || arquivo.getName().contains(pesquisa)) {
-                            produtoEncontrado = true;
-                            lIdNaoExistente.setVisible(false);
-                            modeloTabela.addRow(new Object[]{arquivo.getName().replace(".txt", ""), nome, responsavel, estoque, validade, valorCusto, valorVenda});
+                        // Após a leitura do arquivo, adicionamos o último lote (se houver um válido)
+                        if (!validade.isEmpty()) {
+                            if (id.toLowerCase().contains(pesquisa) || nome.toLowerCase().contains(pesquisa)) {
+                                produtoEncontrado = true;
+                                lIdNaoExistente.setVisible(false);
+
+                                modeloTabela.addRow(new Object[]{id, nome, responsavel, estoque, validade, valorCusto, valorVenda, lote});
+                            }
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
