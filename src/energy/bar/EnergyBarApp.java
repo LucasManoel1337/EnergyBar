@@ -57,9 +57,9 @@ public class EnergyBarApp {
         
         dir.verificarOuCriarDiretorios();
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificacao de banco de dados concluido.");
-        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
-        ger.gerarProdutosDeTeste();
-        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Geracao de produtos cadastrados concluido");
+        //System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
+        //ger.gerarProdutosDeTeste();
+        //System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Geracao de produtos cadastrados concluido");
 
         telaCadastrarProduto = new TelaCadastrarProduto(this); // Passe "this" para TelaCadastrarProduto
         telaProdutos = new TelaProdutos(this); // Inicialize a tela de produtos

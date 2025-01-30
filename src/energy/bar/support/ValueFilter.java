@@ -4,11 +4,19 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 public class ValueFilter extends DocumentFilter {
 
-    private NumberFormat formatter = new DecimalFormat("#,##0.00"); // Formato com 2 casas decimais
+    private NumberFormat formatter;
+
+    public ValueFilter() {
+        formatter = new DecimalFormat("#,##0.00");
+        DecimalFormatSymbols symbols = ((DecimalFormat) formatter).getDecimalFormatSymbols();
+        symbols.setDecimalSeparator('.'); // Define o ponto como separador decimal
+        ((DecimalFormat) formatter).setDecimalFormatSymbols(symbols);
+    }
 
     @Override
     public void insertString(FilterBypass fb, int offs, String str, AttributeSet a) throws BadLocationException {

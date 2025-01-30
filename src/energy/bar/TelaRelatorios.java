@@ -15,6 +15,10 @@ import javax.swing.SwingConstants;
 
 import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.support.LabelEnergyBar;
+import java.io.BufferedReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 class TelaRelatorios extends JPanel {
 
@@ -23,9 +27,9 @@ class TelaRelatorios extends JPanel {
 
     private String valorDoEstoque; // Alterado para String
     private JLabel lValorDeEstoque;
-    private JLabel lLucroLiquido30;
-    private JLabel lLucroLiquido7;
-    private JLabel lLucroLiquidoD;
+    private JLabel lLucroBruto30;
+    private JLabel lLucroBruto7;
+    private JLabel lLucroBrutoD;
 
     public TelaRelatorios() throws IOException {
         setLayout(null);
@@ -54,18 +58,18 @@ class TelaRelatorios extends JPanel {
         painelFundo1.setVisible(true);
         add(painelFundo1);
 
-        JLabel lTLucroLiquido30 = new JLabel("Lucro Liquido (30 dias)");
-        lTLucroLiquido30.setFont(new Font("Arial", Font.BOLD, 16));
-        lTLucroLiquido30.setBounds(75, 180, 550, 40); // Define posição e tamanho
-        lTLucroLiquido30.setForeground(Color.BLACK);
-        lTLucroLiquido30.setVisible(true);
-        add(lTLucroLiquido30);
+        JLabel lTLucroBruto30 = new JLabel("Lucro bruto (30 dias)");
+        lTLucroBruto30.setFont(new Font("Arial", Font.BOLD, 16));
+        lTLucroBruto30.setBounds(75, 180, 550, 40); // Define posição e tamanho
+        lTLucroBruto30.setForeground(Color.BLACK);
+        lTLucroBruto30.setVisible(true);
+        add(lTLucroBruto30);
 
-        lLucroLiquido30 = new JLabel("R$ " + "--,--", JLabel.CENTER);
-        lLucroLiquido30.setFont(new Font("Arial", Font.BOLD, 32));
-        lLucroLiquido30.setBounds(10, 210, 300, 40); // Define posição e tamanho
-        lLucroLiquido30.setForeground(Color.GREEN);
-        add(lLucroLiquido30, SwingConstants.CENTER);
+        lLucroBruto30 = new JLabel("R$ " + somarComprasUltimos30Dias(), JLabel.CENTER);
+        lLucroBruto30.setFont(new Font("Arial", Font.BOLD, 32));
+        lLucroBruto30.setBounds(10, 210, 300, 40); // Define posição e tamanho
+        lLucroBruto30.setForeground(Color.GREEN);
+        add(lLucroBruto30, SwingConstants.CENTER);
 
         JPanel painelFundo2 = new JPanel();
         painelFundo2.setBackground(Color.LIGHT_GRAY); // Cinza claro
@@ -73,18 +77,18 @@ class TelaRelatorios extends JPanel {
         painelFundo2.setVisible(true);
         add(painelFundo2);
 
-        JLabel lTLucroLiquido7 = new JLabel("Lucro Liquido (7 dias)");
-        lTLucroLiquido7.setFont(new Font("Arial", Font.BOLD, 16));
-        lTLucroLiquido7.setBounds(75, 290, 550, 40); // Define posição e tamanho
-        lTLucroLiquido7.setForeground(Color.BLACK);
-        lTLucroLiquido7.setVisible(true);
-        add(lTLucroLiquido7);
+        JLabel lTLucroBruto7 = new JLabel("Lucro bruto (7 dias)");
+        lTLucroBruto7.setFont(new Font("Arial", Font.BOLD, 16));
+        lTLucroBruto7.setBounds(75, 290, 550, 40); // Define posição e tamanho
+        lTLucroBruto7.setForeground(Color.BLACK);
+        lTLucroBruto7.setVisible(true);
+        add(lTLucroBruto7);
 
-        lLucroLiquido7 = new JLabel("R$ " + "--,--", JLabel.CENTER);
-        lLucroLiquido7.setFont(new Font("Arial", Font.BOLD, 32));
-        lLucroLiquido7.setBounds(10, 320, 300, 40); // Define posição e tamanho
-        lLucroLiquido7.setForeground(Color.GREEN);
-        add(lLucroLiquido7, SwingConstants.CENTER);
+        lLucroBruto7 = new JLabel("R$ " + somarComprasUltimos7Dias(), JLabel.CENTER);
+        lLucroBruto7.setFont(new Font("Arial", Font.BOLD, 32));
+        lLucroBruto7.setBounds(10, 320, 300, 40); // Define posição e tamanho
+        lLucroBruto7.setForeground(Color.GREEN);
+        add(lLucroBruto7, SwingConstants.CENTER);
 
         JPanel painelFundo3 = new JPanel();
         painelFundo3.setBackground(Color.LIGHT_GRAY); // Cinza claro
@@ -92,18 +96,18 @@ class TelaRelatorios extends JPanel {
         painelFundo3.setVisible(true);
         add(painelFundo3);
 
-        JLabel lTLucroLiquidoD = new JLabel("Lucro Liquido (Diario)");
-        lTLucroLiquidoD.setFont(new Font("Arial", Font.BOLD, 16));
-        lTLucroLiquidoD.setBounds(75, 400, 550, 40); // Define posição e tamanho
-        lTLucroLiquidoD.setForeground(Color.BLACK);
-        lTLucroLiquidoD.setVisible(true);
-        add(lTLucroLiquidoD);
+        JLabel lTLucroBrutoD = new JLabel("Lucro bruto (Diario)");
+        lTLucroBrutoD.setFont(new Font("Arial", Font.BOLD, 16));
+        lTLucroBrutoD.setBounds(75, 400, 550, 40); // Define posição e tamanho
+        lTLucroBrutoD.setForeground(Color.BLACK);
+        lTLucroBrutoD.setVisible(true);
+        add(lTLucroBrutoD);
 
-        lLucroLiquidoD = new JLabel("R$ " + "--,--", JLabel.CENTER);
-        lLucroLiquidoD.setFont(new Font("Arial", Font.BOLD, 32));
-        lLucroLiquidoD.setBounds(10, 430, 300, 40); // Define posição e tamanho
-        lLucroLiquidoD.setForeground(Color.GREEN);
-        add(lLucroLiquidoD, SwingConstants.CENTER);
+        lLucroBrutoD = new JLabel("R$ " + somarComprasDoDia(), JLabel.CENTER);
+        lLucroBrutoD.setFont(new Font("Arial", Font.BOLD, 32));
+        lLucroBrutoD.setBounds(10, 430, 300, 40); // Define posição e tamanho
+        lLucroBrutoD.setForeground(Color.GREEN);
+        add(lLucroBrutoD, SwingConstants.CENTER);
 
         JPanel painelFundo4 = new JPanel();
         painelFundo4.setBackground(Color.LIGHT_GRAY); // Cinza claro
@@ -127,9 +131,9 @@ class TelaRelatorios extends JPanel {
                 // Verifica se o valor calculado não é nulo ou vazio
                 if (novoValorTotalFormatado != null && !novoValorTotalFormatado.isEmpty()) {
                     lValorDeEstoque.setText("R$ " + novoValorTotalFormatado);
-                    lLucroLiquido30.setText("R$ " + "--,--");
-                    lLucroLiquido7.setText("R$ " + "--,--");
-                    lLucroLiquidoD.setText("R$ " + "--,--");
+                    lLucroBruto30.setText("R$ " + somarComprasUltimos30Dias());
+                    lLucroBruto7.setText("R$ " + somarComprasUltimos7Dias());
+                    lLucroBrutoD.setText("R$ " + somarComprasDoDia());
                 } else {
                     System.err.println("Valor total do estoque é inválido.");
                 }
@@ -192,4 +196,148 @@ class TelaRelatorios extends JPanel {
 
         return valorFormatado;
     }
+
+    public static double somarComprasDoDia() throws IOException {
+        // Obter a data do sistema no formato yyyyMMdd
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String dataAtual = sdf.format(new Date());
+
+        // Diretorio onde os arquivos de compras estão armazenados
+        File diretorio = new File("Dados/Compras");
+
+        // Verificar se o diretório existe
+        if (!diretorio.exists() || !diretorio.isDirectory()) {
+            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+        }
+
+        // Variável para acumular o valor total das compras
+        double total = 0;
+
+        // Listar todos os arquivos no diretório
+        File[] arquivos = diretorio.listFiles();
+        if (arquivos != null) {
+            for (File arquivo : arquivos) {
+                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
+                String nomeArquivo = arquivo.getName();
+                if (nomeArquivo.length() >= 15 && nomeArquivo.substring(0, 8).equals(dataAtual)) {
+                    // Ler o arquivo e procurar a linha que contém o valor
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                        String linha;
+                        while ((linha = br.readLine()) != null) {
+                            if (linha.startsWith("Valor Total da Compra: R$")) {
+                                // Extrair o valor e somar ao total
+                                String valorStr = linha.substring(25).trim().replace(",", ".");
+                                total += Double.parseDouble(valorStr);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return total;
+    }
+
+    public static double somarComprasUltimos7Dias() throws IOException {
+        // Obter a data do sistema no formato yyyyMMdd
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String dataAtual = sdf.format(new Date());
+
+        // Obter a data do sistema e calcular a data dos últimos 7 dias
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        String dataLimite = sdf.format(calendar.getTime());
+
+        // Diretorio onde os arquivos de compras estão armazenados
+        File diretorio = new File("Dados/Compras");
+
+        // Verificar se o diretório existe
+        if (!diretorio.exists() || !diretorio.isDirectory()) {
+            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+        }
+
+        // Variável para acumular o valor total das compras
+        double total = 0;
+
+        // Listar todos os arquivos no diretório
+        File[] arquivos = diretorio.listFiles();
+        if (arquivos != null) {
+            for (File arquivo : arquivos) {
+                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
+                String nomeArquivo = arquivo.getName();
+                if (nomeArquivo.length() >= 15) {
+                    // Pegar a data do arquivo (formato yyyyMMdd) e comparar com o intervalo dos últimos 7 dias
+                    String dataArquivo = nomeArquivo.substring(0, 8);
+                    if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
+                        // Ler o arquivo e procurar a linha que contém o valor
+                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                            String linha;
+                            while ((linha = br.readLine()) != null) {
+                                if (linha.startsWith("Valor Total da Compra: R$")) {
+                                    // Extrair o valor e somar ao total
+                                    String valorStr = linha.substring(25).trim().replace(",", ".");
+                                    total += Double.parseDouble(valorStr);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static double somarComprasUltimos30Dias() throws IOException {
+        // Obter a data do sistema no formato yyyyMMdd
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String dataAtual = sdf.format(new Date());
+
+        // Obter a data do sistema e calcular a data dos últimos 30 dias
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        String dataLimite = sdf.format(calendar.getTime());
+
+        // Diretorio onde os arquivos de compras estão armazenados
+        File diretorio = new File("Dados/Compras");
+
+        // Verificar se o diretório existe
+        if (!diretorio.exists() || !diretorio.isDirectory()) {
+            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+        }
+
+        // Variável para acumular o valor total das compras
+        double total = 0;
+
+        // Listar todos os arquivos no diretório
+        File[] arquivos = diretorio.listFiles();
+        if (arquivos != null) {
+            for (File arquivo : arquivos) {
+                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
+                String nomeArquivo = arquivo.getName();
+                if (nomeArquivo.length() >= 15) {
+                    // Pegar a data do arquivo (formato yyyyMMdd) e comparar com o intervalo dos últimos 30 dias
+                    String dataArquivo = nomeArquivo.substring(0, 8);
+                    if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
+                        // Ler o arquivo e procurar a linha que contém o valor
+                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                            String linha;
+                            while ((linha = br.readLine()) != null) {
+                                if (linha.startsWith("Valor Total da Compra: R$")) {
+                                    // Extrair o valor e somar ao total
+                                    String valorStr = linha.substring(25).trim().replace(",", ".");
+                                    total += Double.parseDouble(valorStr);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
 }
