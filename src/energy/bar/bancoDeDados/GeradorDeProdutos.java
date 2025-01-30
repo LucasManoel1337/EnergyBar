@@ -147,8 +147,4 @@ public class GeradorDeProdutos {
             ex.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        gerarProdutosDeTeste();
-    }
 }
