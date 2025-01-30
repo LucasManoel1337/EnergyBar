@@ -1,5 +1,11 @@
 package energy.bar;
 
+import energy.bar.support.ValueVerifier;
+import energy.bar.support.ValueFilter;
+import energy.bar.support.NumberFilter;
+import energy.bar.support.IdVerifier;
+import energy.bar.support.IdFilter;
+import energy.bar.support.EstoqueVerifier;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -17,50 +23,58 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.MaskFormatter;
 
+import energy.bar.bancoDeDados.Diretorios;
+import energy.bar.support.LabelEnergyBar;
+
 public class TelaCadastrarProduto extends JPanel {
-    
+
+    Diretorios dir = new Diretorios();
+    LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
+
     private EnergyBarApp mainApp; // Adicione o campo para a referência
-    
+    private JButton bBuscar = new JButton("Buscar ID");
+    private JButton bCadastrar = new JButton("Cadastrar");
+    private JButton bCancelar = new JButton("Cancelar");
+
+    private JLabel lCampoIdVazio = new JLabel("Não foi possivel buscar ID com o campo do ID vazio!");
+    private JLabel lfaltaDeDados = new JLabel("Todos os campos devem ser preenchidos!");
+    private JLabel lCadastroFeito = new JLabel("Produto cadastrado com sucesso!");
+    private JLabel lIdNaoExistente = new JLabel("Não existe produto cadastrado com esse ID!");
+
     public TelaCadastrarProduto(EnergyBarApp mainApp) throws ParseException {
         this.mainApp = mainApp; // Inicialize a referência
         setVisible(true);
         setLayout(null); // Define layout manual (absoluto)
-        
-        // Título principal
-        JLabel EnergyBar = new JLabel("ENERGY BAR", JLabel.CENTER);
-        EnergyBar.setFont(new Font("Arial", Font.BOLD, 32));
-        EnergyBar.setBounds(250, 20, 300, 40); // Define posição e tamanho
-        EnergyBar.setVisible(true);
-        add(EnergyBar, SwingConstants.CENTER);
-        
+
+        // Criando e adicionando a label EnergyBar
+        JLabel energyBarLabel = labelEnergyBar.criarLabelEnergyBar(dir);
+        add(energyBarLabel);
+
         // Label falta de dados
-        JLabel lfaltaDeDados = new JLabel("Todos os campos devem ser preenchidos!");
         lfaltaDeDados.setFont(new Font("Arial", Font.BOLD, 16));
         lfaltaDeDados.setBounds(220, 510, 350, 40); // Define posição e tamanho
         lfaltaDeDados.setForeground(Color.RED);
         lfaltaDeDados.setVisible(false);
         add(lfaltaDeDados);
-        
+
         // Label falta de dados
-        JLabel lCadastroFeito = new JLabel("Produto cadastrado com sucesso!");
         lCadastroFeito.setFont(new Font("Arial", Font.BOLD, 16));
         lCadastroFeito.setBounds(250, 510, 350, 40); // Define posição e tamanho
         lCadastroFeito.setForeground(Color.GREEN);
         lCadastroFeito.setVisible(false);
         add(lCadastroFeito);
-        
+
         // Label falta de dados
-        JLabel lCampoIdVazio = new JLabel("Não foi possivel buscar ID com o campo do ID vazio!");
+        lCampoIdVazio.setText("Não foi possivel buscar ID com o campo do ID vazio!");
         lCampoIdVazio.setFont(new Font("Arial", Font.BOLD, 16));
         lCampoIdVazio.setBounds(180, 510, 500, 40); // Define posição e tamanho
         lCampoIdVazio.setForeground(Color.RED);
         lCampoIdVazio.setVisible(false);
         add(lCampoIdVazio);
-        
+
         // Label e TextField ID
         JLabel lId = new JLabel("ID do produto");
         lId.setFont(new Font("Arial", Font.BOLD, 16));
@@ -78,9 +92,7 @@ public class TelaCadastrarProduto extends JPanel {
         ((AbstractDocument) campoId.getDocument()).setDocumentFilter(idFilter);
         campoId.setVisible(true);
         add(campoId);
-        
-        // Botão Buscar
-        JButton bBuscar = new JButton("Buscar ID");
+
         bBuscar.setFont(new Font("Arial", Font.BOLD, 14));
         bBuscar.setBounds(600, 90, 110, 30); // Mesmo tamanho do botão anterior
         bBuscar.setBackground(new Color(32, 3, 3));
@@ -89,7 +101,7 @@ public class TelaCadastrarProduto extends JPanel {
         bBuscar.setBorderPainted(false);
         bBuscar.setVisible(true);
         add(bBuscar);
-        
+
         // Label e TextField Nome do produto
         JLabel lNomeProduto = new JLabel("Nome do Produto");
         lNomeProduto.setFont(new Font("Arial", Font.BOLD, 16));
@@ -103,7 +115,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoNomeProduto.setFont(new Font("Arial", Font.BOLD, 16));
         campoNomeProduto.setVisible(true);
         add(campoNomeProduto);
-        
+
         // Label e TextField Responsavel
         JLabel lResponsavel = new JLabel("Responsável");
         lResponsavel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -119,7 +131,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoResponsavel.setFont(new Font("Arial", Font.BOLD, 16));
         campoResponsavel.setVisible(true);
         add(campoResponsavel);
-        
+
         // Label e TextField Estoque
         JLabel lEstoque = new JLabel("Estoque");
         lEstoque.setFont(new Font("Arial", Font.BOLD, 16));
@@ -137,7 +149,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoEstoque.setInputVerifier(estoqueVerifier);
         campoEstoque.setVisible(true);
         add(campoEstoque);
-        
+
         // Label e TextField Validade
         JLabel lValidade = new JLabel("Validade");
         lValidade.setFont(new Font("Arial", Font.BOLD, 16));
@@ -153,7 +165,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoValidade.setFont(new Font("Arial", Font.BOLD, 16));
         campoValidade.setVisible(true);
         add(campoValidade);
-        
+
         // Label e TextField Valor de custo
         JLabel lValorDeCusto = new JLabel("Valor de custo (valor unitário)");
         lValorDeCusto.setFont(new Font("Arial", Font.BOLD, 16));
@@ -171,7 +183,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoValorDeCusto.setInputVerifier(valueVerifierCusto);
         campoValorDeCusto.setVisible(true);
         add(campoValorDeCusto);
-        
+
         // Label e TextField Valor de venda
         JLabel lValorDeVenda = new JLabel("Valor de venda (valor unitário)");
         lValorDeVenda.setFont(new Font("Arial", Font.BOLD, 16));
@@ -189,7 +201,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoValorDeVenda.setInputVerifier(valueVerifierVenda);
         campoValorDeVenda.setVisible(true);
         add(campoValorDeVenda);
-        
+
         // Label e TextField Valor de venda
         JLabel lLote = new JLabel("Lote");
         lLote.setFont(new Font("Arial", Font.BOLD, 16));
@@ -206,7 +218,7 @@ public class TelaCadastrarProduto extends JPanel {
         campoLote.setText(LocalDateTime.now().format(formatter));
         campoLote.setVisible(true);
         add(campoLote);
-        
+
         // Botão Buscar
         JButton bAplicarLote = new JButton("Aplicar Lote");
         bAplicarLote.setFont(new Font("Arial", Font.BOLD, 14));
@@ -222,7 +234,6 @@ public class TelaCadastrarProduto extends JPanel {
         });
 
         // Botão Cancelar
-        JButton bCancelar = new JButton("Cancelar");
         bCancelar.setFont(new Font("Arial", Font.BOLD, 14));
         bCancelar.setBounds(50, 510, 100, 40); // Mesmo tamanho do botão anterior
         bCancelar.setBackground(Color.RED);
@@ -231,9 +242,8 @@ public class TelaCadastrarProduto extends JPanel {
         bCancelar.setBorderPainted(false);
         bCancelar.setVisible(true);
         add(bCancelar);
-        
+
         // Botão Cadastrar
-        JButton bCadastrar = new JButton("Cadastrar");
         bCadastrar.setFont(new Font("Arial", Font.BOLD, 14));
         bCadastrar.setBounds(600, 510, 110, 40); // Mesmo tamanho do botão anterior
         bCadastrar.setBackground(Color.GREEN);
@@ -242,76 +252,69 @@ public class TelaCadastrarProduto extends JPanel {
         bCadastrar.setBorderPainted(false);
         bCadastrar.setVisible(true);
         add(bCadastrar);
-        
+
         // Label pesquisa
-        JLabel lIdNaoExistente = new JLabel("Não existe produto cadastrado com esse ID!");
         lIdNaoExistente.setFont(new Font("Arial", Font.BOLD, 16));
         lIdNaoExistente.setBounds(200, 510, 400, 40); // Define posição e tamanho
         lIdNaoExistente.setForeground(Color.RED);
         lIdNaoExistente.setVisible(false);
         add(lIdNaoExistente);
-        
+
         bCadastrar.addActionListener(e -> {
-    lCampoIdVazio.setVisible(false);
-    lfaltaDeDados.setVisible(false);
-    lCadastroFeito.setVisible(false);
-    lIdNaoExistente.setVisible(false);
+            lCampoIdVazio.setVisible(false);
+            lfaltaDeDados.setVisible(false);
+            lCadastroFeito.setVisible(false);
+            lIdNaoExistente.setVisible(false);
 
-    String id = campoId.getText().trim();
-    String nomeDoProduto = campoNomeProduto.getText().trim();
-    String responsavel = (String) campoResponsavel.getSelectedItem();
-    String estoque = campoEstoque.getText().trim();
-    String validade = campoValidade.getText().trim();
-    String valorDeCusto = campoValorDeCusto.getText().trim();
-    String valorDeVenda = campoValorDeVenda.getText().trim();
-    String lote = campoLote.getText().trim();
+            String id = campoId.getText().trim();
+            String nomeDoProduto = campoNomeProduto.getText().trim();
+            String responsavel = (String) campoResponsavel.getSelectedItem();
+            String estoque = campoEstoque.getText().trim();
+            String validade = campoValidade.getText().trim();
+            String valorDeCusto = campoValorDeCusto.getText().trim();
+            String valorDeVenda = campoValorDeVenda.getText().trim();
+            String lote = campoLote.getText().trim();
 
-    if (id.isEmpty() || nomeDoProduto.isEmpty() || responsavel.isEmpty() || estoque.isEmpty() ||
-        validade.isEmpty() || valorDeCusto.isEmpty() || valorDeVenda.isEmpty() || lote.isEmpty()) {
-        lfaltaDeDados.setVisible(true);
-        lCadastroFeito.setVisible(false);
-        return;
-    }
+            if (id.isEmpty() || nomeDoProduto.isEmpty() || responsavel.isEmpty() || estoque.isEmpty()
+                    || validade.isEmpty() || valorDeCusto.isEmpty() || valorDeVenda.isEmpty() || lote.isEmpty()) {
+                lfaltaDeDados.setVisible(true);
+                lCadastroFeito.setVisible(false);
+                return;
+            }
 
-    File diretorio = new File("Estoque de produtos");
-    if (!diretorio.exists()) {
-        diretorio.mkdirs(); // Cria o diretório e quaisquer diretórios pais que não existam
-    }
+            try {
+                File arquivo = new File(dir.getDirEstoque(), id + ".txt");
 
-    try {
-        File arquivo = new File(diretorio, id + ".txt");
+                // Se o arquivo já existir, adiciona a informação de lote
+                BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo, true)); // 'true' para modo append
+                writer.write("Nome do Produto: " + nomeDoProduto + "\n");
+                writer.write("Responsável: " + responsavel + "\n");
+                writer.write("Estoque: " + estoque + "\n");
+                writer.write("Validade: " + validade + "\n");
+                writer.write("Valor de Custo: " + valorDeCusto + "\n");
+                writer.write("Valor de Venda: " + valorDeVenda + "\n");
+                writer.write("Lote: " + lote + "\n");
+                writer.write("Data e Hora de Cadastro: " + new java.util.Date().toString() + "\n");
+                writer.close();
 
-        // Se o arquivo já existir, adiciona a informação de lote
-        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo, true)); // 'true' para modo append
-        writer.write("Nome do Produto: " + nomeDoProduto + "\n");
-        writer.write("Responsável: " + responsavel + "\n");
-        writer.write("Estoque: " + estoque + "\n");
-        writer.write("Validade: " + validade + "\n");
-        writer.write("Valor de Custo: " + valorDeCusto + "\n");
-        writer.write("Valor de Venda: " + valorDeVenda + "\n");
-        writer.write("Lote: " + lote + "\n");
-        writer.write("Data e Hora de Cadastro: " + new java.util.Date().toString() + "\n");
-        writer.close();
+                // Limpa os campos após o cadastro
+                campoId.setText("");
+                campoNomeProduto.setText("");
+                campoEstoque.setText("");
+                campoResponsavel.setSelectedItem("");
+                campoValidade.setText("");
+                campoValorDeCusto.setText("");
+                campoValorDeVenda.setText("");
 
-        // Limpa os campos após o cadastro
-        campoId.setText("");
-        campoNomeProduto.setText("");
-        campoEstoque.setText("");
-        campoResponsavel.setSelectedItem("");
-        campoValidade.setText("");
-        campoValorDeCusto.setText("");
-        campoValorDeVenda.setText("");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
-    } catch (Exception ex) {
-        ex.printStackTrace();
-    }
-
-    lCampoIdVazio.setVisible(false);
-    lfaltaDeDados.setVisible(false);
-    lCadastroFeito.setVisible(true);
-    lIdNaoExistente.setVisible(false);
-});
-
+            lCampoIdVazio.setVisible(false);
+            lfaltaDeDados.setVisible(false);
+            lCadastroFeito.setVisible(true);
+            lIdNaoExistente.setVisible(false);
+        });
 
         // Ação do botão "Cancelar"
         bCancelar.addActionListener(e -> {
@@ -319,7 +322,7 @@ public class TelaCadastrarProduto extends JPanel {
             lfaltaDeDados.setVisible(false);
             lCadastroFeito.setVisible(false);
             lIdNaoExistente.setVisible(false);
-            
+
             mainApp.exibirTela(mainApp.getTelaProdutos()); // Voltar para a tela de produtos
             // Limpar os campos (opcional)
             campoId.setText("");
@@ -331,7 +334,7 @@ public class TelaCadastrarProduto extends JPanel {
             campoValorDeVenda.setText("");
             campoLote.setText("");
         });
-        
+
         // Ação do botão "Cadastrar Produto"
         bBuscar.addActionListener(e -> {
             lCampoIdVazio.setVisible(false);
@@ -345,49 +348,49 @@ public class TelaCadastrarProduto extends JPanel {
                 lCampoIdVazio.setVisible(true);
                 return;
             }
-    
-            File diretorio = new File("Estoque de produtos");
+
+            File diretorio = new File(dir.getDirEstoque());
             if (!diretorio.exists()) {
                 diretorio.mkdirs(); // Cria o diretório e quaisquer diretórios pais que não existam
-            } 
+            }
 
             File arquivo = new File(diretorio, id + ".txt");
-                if (!arquivo.exists()) {
-                    campoNomeProduto.setText("");
-                    campoResponsavel.setSelectedItem("");
-                    campoEstoque.setText("");
-                    campoValidade.setText("");
-                    campoValorDeCusto.setText("");
-                    campoValorDeVenda.setText("");
-        
-                    lIdNaoExistente.setVisible(true);
-                    campoNomeProduto.setEnabled(true);
-                    return;
-                }
+            if (!arquivo.exists()) {
+                campoNomeProduto.setText("");
+                campoResponsavel.setSelectedItem("");
+                campoEstoque.setText("");
+                campoValidade.setText("");
+                campoValorDeCusto.setText("");
+                campoValorDeVenda.setText("");
 
-    try {
-        BufferedReader reader = new BufferedReader(new FileReader(arquivo));
-        String linha;
-        while ((linha = reader.readLine()) != null) {
-            if (linha.startsWith("Nome do Produto: ")) {
-                campoNomeProduto.setText(linha.replace("Nome do Produto: ", "").trim());
-                campoNomeProduto.setEnabled(false);
-            } else if (linha.startsWith("Valor de Custo: ")) {
-                campoValorDeCusto.setText(linha.replace("Valor de Custo: ", "").trim());
-            } else if (linha.startsWith("Valor de Venda: ")) {
-                campoValorDeVenda.setText(linha.replace("Valor de Venda: ", "").trim());
-            } else if (linha.startsWith("Lote: ")) {
-                campoLote.setText(linha.replace("Lote: ", "").trim());
+                lIdNaoExistente.setVisible(true);
+                campoNomeProduto.setEnabled(true);
+                return;
             }
-        }
-        reader.close();
-        lCampoIdVazio.setVisible(false);
-        lfaltaDeDados.setVisible(false);
-        lCadastroFeito.setVisible(false);
-        lIdNaoExistente.setVisible(false);
-    } catch (Exception ex) {
-        ex.printStackTrace();
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+                String linha;
+                while ((linha = reader.readLine()) != null) {
+                    if (linha.startsWith("Nome do Produto: ")) {
+                        campoNomeProduto.setText(linha.replace("Nome do Produto: ", "").trim());
+                        campoNomeProduto.setEnabled(false);
+                    } else if (linha.startsWith("Valor de Custo: ")) {
+                        campoValorDeCusto.setText(linha.replace("Valor de Custo: ", "").trim());
+                    } else if (linha.startsWith("Valor de Venda: ")) {
+                        campoValorDeVenda.setText(linha.replace("Valor de Venda: ", "").trim());
+                    } else if (linha.startsWith("Lote: ")) {
+                        campoLote.setText(linha.replace("Lote: ", "").trim());
+                    }
+                }
+                reader.close();
+                lCampoIdVazio.setVisible(false);
+                lfaltaDeDados.setVisible(false);
+                lCadastroFeito.setVisible(false);
+                lIdNaoExistente.setVisible(false);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
-});
-    }
-    }
+}

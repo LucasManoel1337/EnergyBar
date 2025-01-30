@@ -5,6 +5,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 
 class BotaoPersonalizado extends JButton {
+
     private Color corPadrao;
     private Color corSelecionada;
 

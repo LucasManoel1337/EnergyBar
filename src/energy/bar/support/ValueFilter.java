@@ -1,4 +1,4 @@
-package energy.bar;
+package energy.bar.support;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

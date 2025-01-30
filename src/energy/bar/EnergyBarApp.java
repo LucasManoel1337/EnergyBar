@@ -12,20 +12,28 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import energy.bar.bancoDeDados.Diretorios;
+import energy.bar.bancoDeDados.GeradorDeProdutos;
+
 public class EnergyBarApp {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
+    String dataHoraAtual = LocalDateTime.now().format(formatter);
     
+    Diretorios dir = new Diretorios();
+    GeradorDeProdutos ger = new GeradorDeProdutos();
+
     private TelaCadastrarProduto telaCadastrarProduto;
     private TelaProdutos telaProdutos; // Adicione o campo para a tela de produtos
 
     public TelaCadastrarProduto getTelaCadastrarProduto() {
         return telaCadastrarProduto;
     }
-    
+
     public TelaProdutos getTelaProdutos() {
         return telaProdutos;
     }
 
-    private String versaoPrograma = "0.2.2";
+    private String versaoPrograma = "0.3.1";
     private JLabel labelVersao;
 
     private JFrame janela;
@@ -46,9 +54,16 @@ public class EnergyBarApp {
     private TelaRelatorios telaRelatorios;
 
     public EnergyBarApp() throws ParseException {
+        
+        dir.verificarOuCriarDiretorios();
+        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificacao de banco de dados concluido.");
+        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
+        ger.gerarProdutosDeTeste();
+        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Geracao de produtos cadastrados concluido");
+
         telaCadastrarProduto = new TelaCadastrarProduto(this); // Passe "this" para TelaCadastrarProduto
         telaProdutos = new TelaProdutos(this); // Inicialize a tela de produtos
-        
+
         configurarJanela();
         configurarPainelPrincipal();
         configurarPainelFaixa();
@@ -57,7 +72,7 @@ public class EnergyBarApp {
         configurarPainelConteudo();
         adicionarComponentes();
     }
-    
+
     public void exibirTela(JPanel tela) {
         painelConteudo.removeAll();
         painelConteudo.add(tela, BorderLayout.CENTER);
@@ -107,7 +122,6 @@ public class EnergyBarApp {
             System.err.println("Erro ao criar a tela inicial: " + e.getMessage());
         }
     }
-
 
     private void configurarBotoes() throws ParseException {
         bInicio = criarBotao("INICIO", telaInicio);
@@ -173,6 +187,11 @@ public class EnergyBarApp {
     }
 
     public static void main(String[] args) throws ParseException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
+        String dataHoraAtual = LocalDateTime.now().format(formatter);
+        
+        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Inicializando sistema.");
+        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificando o banco de dados.");
         new EnergyBarApp();
     }
 }

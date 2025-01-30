@@ -3,10 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/ENERGY%20BAR/ENERGY%20BAR/src/energy/bar/EnergyBarApp.java</file>
-            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/ENERGY%20BAR/ENERGY%20BAR/src/energy/bar/ValueVerifier.java</file>
-            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/ENERGY%20BAR/ENERGY%20BAR/src/energy/bar/ValueFilter.java</file>
-            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/ENERGY%20BAR/ENERGY%20BAR/src/energy/bar/TelaProdutos.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaSaidas.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/EstoqueVerifier.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/IdVerifier.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaRelatorios.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/EnergyBarApp.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaCadastrarProduto.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/LabelEnergyBar.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/NumberFilter.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaVendas.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/bancoDeDados/Diretorios.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaProdutos.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/IdFilter.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/BotaoPersonalizado.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/TelaInicio.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/ValueFilter.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/support/ValueVerifier.java</file>
+            <file>file:/C:/Users/lmpaixao/Documents/NetBeansProjects/EnergyBar/src/energy/bar/PainelFaixa.java</file>
         </group>
     </open-files>
 </project-private>

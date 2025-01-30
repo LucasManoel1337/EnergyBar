@@ -1,11 +1,11 @@
-package energy.bar;
+package energy.bar.support;
 
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
+import javax.swing.JOptionPane; // Importe JOptionPane
 
-public class ValueVerifier extends InputVerifier {
+public class EstoqueVerifier extends InputVerifier {
 
     @Override
     public boolean shouldYieldFocus(JComponent input) {
@@ -17,11 +17,11 @@ public class ValueVerifier extends InputVerifier {
         }
 
         try {
-            Double.parseDouble(text.replaceAll("[^0-9]", "")) ; // Tenta converter para double (sem formatação)
+            Integer.parseInt(text); // Tenta converter para inteiro
             return true; // Aceita se for numérico
         } catch (NumberFormatException e) {
             // Exibe mensagem de erro
-            JOptionPane.showMessageDialog(input, "Digite um valor numérico válido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(input, "Digite apenas números no campo Estoque.", "Erro", JOptionPane.ERROR_MESSAGE);
             textField.setText(""); // Limpa o campo
             return false; // Rejeita se não for numérico
         }
