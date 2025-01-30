@@ -32,7 +32,7 @@ class TelaRelatorios extends JPanel {
         // Título principal
         JLabel EnergyBar = new JLabel("ENERGY BAR", JLabel.CENTER);
         try {
-            Font minhaFonte = Font.createFont(Font.TRUETYPE_FONT, new File("DelaGothicOne-Regular.ttf"));
+            Font minhaFonte = Font.createFont(Font.TRUETYPE_FONT, new File("Arquivos de suporte/Fontes/DelaGothicOne-Regular.ttf"));
             minhaFonte = minhaFonte.deriveFont(Font.BOLD, 32);
             EnergyBar.setFont(minhaFonte);
             EnergyBar.setForeground(Color.red);
