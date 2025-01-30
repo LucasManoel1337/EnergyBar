@@ -30,6 +30,8 @@ import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.support.LabelEnergyBar;
 
 public class TelaCadastrarProduto extends JPanel {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
+    String dataHoraAtual = LocalDateTime.now().format(formatter);
 
     Diretorios dir = new Diretorios();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
@@ -314,6 +316,7 @@ public class TelaCadastrarProduto extends JPanel {
             lfaltaDeDados.setVisible(false);
             lCadastroFeito.setVisible(true);
             lIdNaoExistente.setVisible(false);
+            System.out.println("[" + dataHoraAtual + "] - [TelaCadastrarProduto.java] - Produto cadastrado com sucesso!");
         });
 
         // Ação do botão "Cancelar"
@@ -388,6 +391,7 @@ public class TelaCadastrarProduto extends JPanel {
                 lfaltaDeDados.setVisible(false);
                 lCadastroFeito.setVisible(false);
                 lIdNaoExistente.setVisible(false);
+                System.out.println("[" + dataHoraAtual + "] - [TelaCadastrarProduto.java] - Busca de produto feita com sucesso!");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

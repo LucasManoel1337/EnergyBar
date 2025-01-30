@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -34,6 +36,8 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.AbstractDocument;
 
 class TelaVendas extends JPanel {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
+    String dataHoraAtual = LocalDateTime.now().format(formatter);
 
     Diretorios dir = new Diretorios();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
@@ -423,16 +427,13 @@ class TelaVendas extends JPanel {
                         writerProduto.write(conteudoArquivo.toString());
                         writerProduto.close();
 
-                        System.out.println("Lotes com estoque zero removidos do produto: " + arquivoProduto.getName());
+                        System.out.println("[" + dataHoraAtual + "] - [TelaVendas.java] - Lotes com estoque zero removidos do produto: " + arquivoProduto.getName());
                     }
                 }
 
                 // Fecha o arquivo do histórico de compras
                 writer.close();
 
-                // Mensagem de confirmação
-                System.out.println("Compra registrada no arquivo: " + arquivoHistorico.getName());
-                System.out.println("Compra finalizada. Lotes com estoque zero foram removidos.");
 
                 // Limpa a tabela após registrar
                 modeloTabela.setRowCount(0);
@@ -440,7 +441,9 @@ class TelaVendas extends JPanel {
                 campoFuncionario.setSelectedItem("");
                 campoTotalDaCompra.setText("R$ 00,00");
                 campoFormaDePagamento.setSelectedItem("");
-
+                
+                System.out.println("[" + dataHoraAtual + "] - [TelaVendas.java] - Venda cadastrada em "+arquivoHistorico.getName());
+                System.out.println("[" + dataHoraAtual + "] - [TelaVendas.java] - Venda feita e cadastrada com sucesso!");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

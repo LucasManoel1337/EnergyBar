@@ -168,7 +168,7 @@ public class TelaProdutos extends JPanel {
         carregarProdutos(modeloTabela);
 
         // Label inicial
-        JLabel label = new JLabel("Pesquisar ID do produto");
+        JLabel label = new JLabel("Pesquisar ID ou nome do produto");
         label.setFont(new Font("Arial", Font.BOLD, 16));
         label.setBounds(10, 70, 300, 40); // Define posição e tamanho
         add(label);
