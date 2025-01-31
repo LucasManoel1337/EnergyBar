@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 
 import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.bancoDeDados.GeradorDeProdutos;
+import java.io.IOException;
 
 public class EnergyBarApp {
 
@@ -54,13 +55,13 @@ public class EnergyBarApp {
     private TelaSaidas telaSaidas;
     private TelaRelatorios telaRelatorios;
 
-    public EnergyBarApp() throws ParseException {
+    public EnergyBarApp() throws ParseException, IOException {
 
         dir.verificarOuCriarDiretorios();
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificacao de banco de dados concluido.");
-        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
-        ger.gerarProdutosDeTeste();
-        System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Geracao de produtos cadastrados concluido");
+        //System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
+        //ger.gerarProdutosDeTeste();
+        //System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Geracao de produtos cadastrados concluido");
 
         telaCadastrarProduto = new TelaCadastrarProduto(this); // Passe "this" para TelaCadastrarProduto
         telaProdutos = new TelaProdutos(this); // Inicialize a tela de produtos
@@ -112,7 +113,7 @@ public class EnergyBarApp {
         labelDataHora.setText(obterDataHoraAtual());
     }
 
-    private void configurarTelas() throws ParseException {
+    private void configurarTelas() throws ParseException, IOException {
         telaInicio = new TelaInicio();
         telaProdutos = new TelaProdutos(this); // Passa "this" para TelaProdutos
         telaVendas = new TelaVendas();
@@ -187,7 +188,7 @@ public class EnergyBarApp {
         janela.setVisible(true);
     }
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
         String dataHoraAtual = LocalDateTime.now().format(formatter);
 
