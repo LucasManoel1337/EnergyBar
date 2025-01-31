@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 
 import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.support.LabelEnergyBar;
+import energy.bar.support.TimerAvisosLabels;
 import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import java.util.Date;
 class TelaRelatorios extends JPanel {
 
     Diretorios dir = new Diretorios();
+    TimerAvisosLabels tir = new TimerAvisosLabels();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
 
     private String valorDoEstoque; // Alterado para String
@@ -37,6 +39,13 @@ class TelaRelatorios extends JPanel {
         // Criando e adicionando a label EnergyBar
         JLabel energyBarLabel = labelEnergyBar.criarLabelEnergyBar(dir);
         add(energyBarLabel);
+
+        JLabel lDadosAtualizados = new JLabel("Dados atualizados com sucesso!");
+        lDadosAtualizados.setFont(new Font("Arial", Font.BOLD, 16));
+        lDadosAtualizados.setBounds(250, 510, 400, 40); // Define posição e tamanho
+        lDadosAtualizados.setForeground(Color.GREEN);
+        lDadosAtualizados.setVisible(false);
+        add(lDadosAtualizados);
 
         JLabel lTValorDeEstoque = new JLabel("Valor total de estoque");
         lTValorDeEstoque.setFont(new Font("Arial", Font.BOLD, 16));
@@ -134,6 +143,8 @@ class TelaRelatorios extends JPanel {
                     lLucroBruto30.setText("R$ " + somarComprasUltimos30Dias());
                     lLucroBruto7.setText("R$ " + somarComprasUltimos7Dias());
                     lLucroBrutoD.setText("R$ " + somarComprasDoDia());
+
+                    tir.exibirAvisoTemporario(lDadosAtualizados);
                 } else {
                     System.err.println("Valor total do estoque é inválido.");
                 }

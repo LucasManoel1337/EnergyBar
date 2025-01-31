@@ -16,9 +16,10 @@ import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.bancoDeDados.GeradorDeProdutos;
 
 public class EnergyBarApp {
+
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
     String dataHoraAtual = LocalDateTime.now().format(formatter);
-    
+
     Diretorios dir = new Diretorios();
     GeradorDeProdutos ger = new GeradorDeProdutos();
 
@@ -33,7 +34,7 @@ public class EnergyBarApp {
         return telaProdutos;
     }
 
-    private String versaoPrograma = "0.4.0";
+    private String versaoPrograma = "0.4.3";
     private JLabel labelVersao;
 
     private JFrame janela;
@@ -54,7 +55,7 @@ public class EnergyBarApp {
     private TelaRelatorios telaRelatorios;
 
     public EnergyBarApp() throws ParseException {
-        
+
         dir.verificarOuCriarDiretorios();
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificacao de banco de dados concluido.");
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Iniciando geracao de produtos cadastrados");
@@ -189,7 +190,7 @@ public class EnergyBarApp {
     public static void main(String[] args) throws ParseException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
         String dataHoraAtual = LocalDateTime.now().format(formatter);
-        
+
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Inicializando sistema.");
         System.out.println("[" + dataHoraAtual + "] - [EnergyBarApp.java] - Verificando o banco de dados.");
         new EnergyBarApp();

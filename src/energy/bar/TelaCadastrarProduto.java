@@ -28,12 +28,17 @@ import javax.swing.text.MaskFormatter;
 
 import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.support.LabelEnergyBar;
+import energy.bar.support.TimerAvisosLabels;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
 
 public class TelaCadastrarProduto extends JPanel {
+
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd-MM-yyyy");
     String dataHoraAtual = LocalDateTime.now().format(formatter);
 
     Diretorios dir = new Diretorios();
+    TimerAvisosLabels tir = new TimerAvisosLabels();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
 
     private EnergyBarApp mainApp; // Adicione o campo para a referência
@@ -94,6 +99,20 @@ public class TelaCadastrarProduto extends JPanel {
         ((AbstractDocument) campoId.getDocument()).setDocumentFilter(idFilter);
         campoId.setVisible(true);
         add(campoId);
+        campoId.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField textField = (JTextField) input;
+                String text = textField.getText().trim();
+
+                // Permite campo vazio para que o usuário possa sair dele
+                if (text.isEmpty()) {
+                    return true;
+                }
+
+                return true; // Permite a mudança de foco
+            }
+        });
 
         bBuscar.setFont(new Font("Arial", Font.BOLD, 14));
         bBuscar.setBounds(600, 90, 110, 30); // Mesmo tamanho do botão anterior
@@ -279,7 +298,7 @@ public class TelaCadastrarProduto extends JPanel {
 
             if (id.isEmpty() || nomeDoProduto.isEmpty() || responsavel.isEmpty() || estoque.isEmpty()
                     || validade.isEmpty() || valorDeCusto.isEmpty() || valorDeVenda.isEmpty() || lote.isEmpty()) {
-                lfaltaDeDados.setVisible(true);
+                tir.exibirAvisoTemporario(lfaltaDeDados);
                 lCadastroFeito.setVisible(false);
                 return;
             }
@@ -314,8 +333,9 @@ public class TelaCadastrarProduto extends JPanel {
 
             lCampoIdVazio.setVisible(false);
             lfaltaDeDados.setVisible(false);
-            lCadastroFeito.setVisible(true);
             lIdNaoExistente.setVisible(false);
+
+            tir.exibirAvisoTemporario(lCadastroFeito);
             System.out.println("[" + dataHoraAtual + "] - [TelaCadastrarProduto.java] - Produto cadastrado com sucesso!");
         });
 
@@ -348,7 +368,7 @@ public class TelaCadastrarProduto extends JPanel {
             String id = campoId.getText().trim();
 
             if (id.isEmpty()) {
-                lCampoIdVazio.setVisible(true);
+                tir.exibirAvisoTemporario(lCampoIdVazio);
                 return;
             }
 
@@ -366,7 +386,7 @@ public class TelaCadastrarProduto extends JPanel {
                 campoValorDeCusto.setText("");
                 campoValorDeVenda.setText("");
 
-                lIdNaoExistente.setVisible(true);
+                tir.exibirAvisoTemporario(lIdNaoExistente);
                 campoNomeProduto.setEnabled(true);
                 return;
             }

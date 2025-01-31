@@ -26,10 +26,12 @@ import javax.swing.table.TableRowSorter;
 
 import energy.bar.bancoDeDados.Diretorios;
 import energy.bar.support.LabelEnergyBar;
+import energy.bar.support.TimerAvisosLabels;
 
 public class TelaProdutos extends JPanel {
 
     Diretorios dir = new Diretorios();
+    TimerAvisosLabels tir = new TimerAvisosLabels();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
 
     private EnergyBarApp mainApp;
@@ -191,6 +193,13 @@ public class TelaProdutos extends JPanel {
         lIdNaoExistente.setVisible(false);
         add(lIdNaoExistente);
 
+        JLabel lTabelaAtualizada = new JLabel("Tabela atualizada!");
+        lTabelaAtualizada.setFont(new Font("Arial", Font.BOLD, 16));
+        lTabelaAtualizada.setBounds(300, 510, 400, 40); // Define posição e tamanho
+        lTabelaAtualizada.setForeground(Color.GREEN);
+        lTabelaAtualizada.setVisible(false);
+        add(lTabelaAtualizada);
+
         // Label pesquisa
         JLabel lPesquisaVazio = new JLabel("Não foi possivel pesquisar o produto com o campo de pesquisa vazio!");
         lPesquisaVazio.setFont(new Font("Arial", Font.BOLD, 16));
@@ -231,6 +240,7 @@ public class TelaProdutos extends JPanel {
             lIdNaoExistente.setVisible(false);
             modeloTabela.setRowCount(0); // Limpa a tabela
             carregarProdutos(modeloTabela); // Recarrega os dados
+            tir.exibirAvisoTemporario(lTabelaAtualizada);
         });
         add(bAtualizar);
 
@@ -239,7 +249,7 @@ public class TelaProdutos extends JPanel {
             String pesquisa = campoPesquisa.getText().trim().toLowerCase(); // Normaliza para minúsculas
 
             if (pesquisa.isEmpty()) {
-                lPesquisaVazio.setVisible(true);
+                tir.exibirAvisoTemporario(lPesquisaVazio);
             } else {
                 lPesquisaVazio.setVisible(false);
                 modeloTabela.setRowCount(0); // Limpa a tabela antes de preencher
