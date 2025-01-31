@@ -282,6 +282,12 @@ class TelaVendas extends JPanel {
         ((AbstractDocument) campoDesconto.getDocument()).setDocumentFilter(idFilter);
         campoDesconto.setVisible(true);
         add(campoDesconto);
+        campoDesconto.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                return true; // Permite a mudança de foco
+            }
+        });
 
         JButton bAplicarDesconto = new JButton();
         bAplicarDesconto.setText("Aplicar");
