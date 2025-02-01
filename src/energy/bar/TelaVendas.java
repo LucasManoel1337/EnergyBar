@@ -60,6 +60,9 @@ class TelaVendas extends JPanel {
     public JTextField campoTotalDaCompra = new JTextField();
     public JTextField campoDesconto = new JTextField();
 
+    public String descontoStr = campoDesconto.getText().trim();
+    public int desconto = 0; // valor padrão para desconto
+
     Diretorios dir = new Diretorios();
     TimerAvisosLabels tir = new TimerAvisosLabels();
     LabelEnergyBar labelEnergyBar = new LabelEnergyBar();
@@ -112,32 +115,32 @@ class TelaVendas extends JPanel {
 
         JLabel lfaltaDeDados = new JLabel("Campos obrigatorios devem ser preenchidos!");
         lfaltaDeDados.setFont(new Font("Arial", Font.BOLD, 16));
-        lfaltaDeDados.setBounds(220, 470, 350, 40); // Define posição e tamanho
+        lfaltaDeDados.setBounds(220, 465, 350, 40); // Define posição e tamanho
         lfaltaDeDados.setForeground(Color.RED);
         lfaltaDeDados.setVisible(false);
         add(lfaltaDeDados);
 
         JLabel lCompraFinalizada = new JLabel("Compra feita e cadastrada com sucesso!");
         lCompraFinalizada.setFont(new Font("Arial", Font.BOLD, 16));
-        lCompraFinalizada.setBounds(220, 470, 350, 40); // Define posição e tamanho
+        lCompraFinalizada.setBounds(220, 465, 350, 40); // Define posição e tamanho
         lCompraFinalizada.setForeground(Color.GREEN);
         lCompraFinalizada.setVisible(false);
         add(lCompraFinalizada);
 
         JLabel lCarrinhoVazio = new JLabel("Carrinho está vazio!");
         lCarrinhoVazio.setFont(new Font("Arial", Font.BOLD, 16));
-        lCarrinhoVazio.setBounds(290, 470, 350, 40); // Define posição e tamanho
+        lCarrinhoVazio.setBounds(290, 465, 350, 40); // Define posição e tamanho
         lCarrinhoVazio.setForeground(Color.RED);
         lCarrinhoVazio.setVisible(false);
         add(lCarrinhoVazio);
 
         JLabel lIdOuQtnVazio = new JLabel("ID ou Quantidade está vazio!");
         lIdOuQtnVazio.setFont(new Font("Arial", Font.BOLD, 16));
-        lIdOuQtnVazio.setBounds(260, 470, 350, 40); // Define posição e tamanho
+        lIdOuQtnVazio.setBounds(260, 465, 350, 40); // Define posição e tamanho
         lIdOuQtnVazio.setForeground(Color.RED);
         lIdOuQtnVazio.setVisible(false);
         add(lIdOuQtnVazio);
-        
+
         lDescontoAplicado.setFont(new Font("Arial", Font.BOLD, 16));
         lDescontoAplicado.setBounds(135, 480, 350, 40); // Define posição e tamanho
         lDescontoAplicado.setForeground(Color.GREEN);
@@ -178,13 +181,13 @@ class TelaVendas extends JPanel {
         });
 
         lProdutoAdicionado.setFont(new Font("Arial", Font.BOLD, 16));
-        lProdutoAdicionado.setBounds(220, 470, 350, 40); // Define posição e tamanho
+        lProdutoAdicionado.setBounds(220, 465, 350, 40); // Define posição e tamanho
         lProdutoAdicionado.setForeground(Color.GREEN);
         lProdutoAdicionado.setVisible(false);
         add(lProdutoAdicionado);
 
         lProdutoSemEstoque.setFont(new Font("Arial", Font.BOLD, 16));
-        lProdutoSemEstoque.setBounds(150, 470, 450, 40); // Define posição e tamanho
+        lProdutoSemEstoque.setBounds(150, 465, 450, 40); // Define posição e tamanho
         lProdutoSemEstoque.setForeground(Color.RED);
         lProdutoSemEstoque.setVisible(false);
         add(lProdutoSemEstoque);
@@ -260,7 +263,7 @@ class TelaVendas extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selecionado = (String) campoTipocliente.getSelectedItem();
-                
+
                 if ("Funcionario".equals(selecionado)) {
                     campoDesconto.setText("020");
                     campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
@@ -268,7 +271,7 @@ class TelaVendas extends JPanel {
                     campoDesconto.setText("000");
                     campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
                 }
-                
+
             }
         });
 
@@ -372,7 +375,7 @@ class TelaVendas extends JPanel {
         campoTotalDaCompra.setFont(new Font("Arial", Font.BOLD, 16));
         campoTotalDaCompra.setVisible(true);
         campoTotalDaCompra.setEnabled(false);
-        campoTotalDaCompra.setText("R$ 00,00");
+        campoTotalDaCompra.setText("R$ 00.00");
         add(campoTotalDaCompra);
 
         bAdicionar.addActionListener(e -> {
@@ -482,7 +485,6 @@ class TelaVendas extends JPanel {
             lCompraFinalizada.setVisible(false);
             lProdutoAdicionado.setVisible(false);
             lIdOuQtnVazio.setVisible(false);
-            lDescontoAplicado.setVisible(false);
             try {
                 removerProduto();
                 campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
@@ -492,123 +494,122 @@ class TelaVendas extends JPanel {
         });
 
         bFinalizarCompra.addActionListener(e -> {
-    lfaltaDeDados.setVisible(false);
-    lCarrinhoVazio.setVisible(false);
-    lCompraFinalizada.setVisible(false);
-    lProdutoAdicionado.setVisible(false);
-    lIdOuQtnVazio.setVisible(false);
-    lDescontoAplicado.setVisible(false);
+            lfaltaDeDados.setVisible(false);
+            lCarrinhoVazio.setVisible(false);
+            lCompraFinalizada.setVisible(false);
+            lProdutoAdicionado.setVisible(false);
+            lIdOuQtnVazio.setVisible(false);
+            lDescontoAplicado.setVisible(false);
 
-    // Verifica se os campos ComboBox e a tabela estão preenchidos
-    if (campoTipocliente.getSelectedItem() == null || campoFormaDePagamento.getSelectedItem() == null || campoFuncionario.getSelectedItem() == null
-            || campoTipocliente.getSelectedItem() == "" || campoFormaDePagamento.getSelectedItem() == "" || campoFuncionario.getSelectedItem() == "") {
-        tir.exibirAvisoTemporario(lfaltaDeDados);
-        return;
-    }
+            // Verifica se os campos ComboBox e a tabela estão preenchidos
+            if (campoTipocliente.getSelectedItem() == null || campoFormaDePagamento.getSelectedItem() == null || campoFuncionario.getSelectedItem() == null
+                    || campoTipocliente.getSelectedItem() == "" || campoFormaDePagamento.getSelectedItem() == "" || campoFuncionario.getSelectedItem() == "") {
+                tir.exibirAvisoTemporario(lfaltaDeDados);
+                return;
+            }
 
-    if (modeloTabela.getRowCount() == 0) {
-        tir.exibirAvisoTemporario(lCarrinhoVazio);
-        return;
-    }
+            if (modeloTabela.getRowCount() == 0) {
+                tir.exibirAvisoTemporario(lCarrinhoVazio);
+                return;
+            }
 
-    try {
-        // Pega a data e hora atual para nome do arquivo
-        String dataHora = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+            try {
+                // Pega a data e hora atual para nome do arquivo
+                String dataHora = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
 
-        // Cria o arquivo com o nome baseado na data e hora
-        File arquivoHistorico = new File(dir.getDirHistoricoDeCompras(), dataHora + ".txt");
+                // Cria o arquivo com o nome baseado na data e hora
+                File arquivoHistorico = new File(dir.getDirHistoricoDeCompras(), dataHora + ".txt");
 
-        // Cria o BufferedWriter para escrever no arquivo
-        BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoHistorico));
+                // Cria o BufferedWriter para escrever no arquivo
+                BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoHistorico));
 
-        // Escreve as informações dos campos ComboBox
-        writer.write("Tipo de Cliente: " + campoTipocliente.getSelectedItem().toString() + "\n");
-        writer.write("Forma de Pagamento: " + campoFormaDePagamento.getSelectedItem().toString() + "\n");
-        writer.write("Funcionário: " + campoFuncionario.getSelectedItem().toString() + "\n");
+                // Escreve as informações dos campos ComboBox
+                writer.write("Tipo de Cliente: " + campoTipocliente.getSelectedItem().toString() + "\n");
+                writer.write("Forma de Pagamento: " + campoFormaDePagamento.getSelectedItem().toString() + "\n");
+                writer.write("Funcionário: " + campoFuncionario.getSelectedItem().toString() + "\n");
 
-        // Escreve o valor total da compra na primeira linha
-        writer.write("Valor Total da Compra: " + campoTotalDaCompra.getText() + "\n");
+                // Escreve o valor total da compra na primeira linha
+                writer.write("Valor Total da Compra: " + campoTotalDaCompra.getText() + "\n");
 
-        // Escreve o valor do desconto (se houver) - considerando o valor do campoDesconto
-        String descontoStr = campoDesconto.getText().trim();
-        int desconto = Integer.parseInt(descontoStr);
-        writer.write("Desconto Aplicado: " + desconto + "%\n");
+                // Escreve o valor do desconto (se houver) - considerando o valor do campoDesconto
+                String descontoStr = campoDesconto.getText().trim();
+                int desconto = Integer.parseInt(descontoStr);
+                writer.write("Desconto Aplicado: " + desconto + "%\n");
 
-        // Escreve os dados da tabela
-        for (int i = 0; i < modeloTabela.getRowCount(); i++) {
-            String idProduto = modeloTabela.getValueAt(i, 0).toString();
-            String nomeProduto = modeloTabela.getValueAt(i, 1).toString();
-            String quantidade = modeloTabela.getValueAt(i, 2).toString();
-            String valorDeVenda = modeloTabela.getValueAt(i, 3).toString();
+                // Escreve os dados da tabela
+                for (int i = 0; i < modeloTabela.getRowCount(); i++) {
+                    String idProduto = modeloTabela.getValueAt(i, 0).toString();
+                    String nomeProduto = modeloTabela.getValueAt(i, 1).toString();
+                    String quantidade = modeloTabela.getValueAt(i, 2).toString();
+                    String valorDeVenda = modeloTabela.getValueAt(i, 3).toString();
 
-            writer.write(idProduto + " | " + nomeProduto + " | " + quantidade + " | " + valorDeVenda + "\n");
-        }
+                    writer.write(idProduto + " | " + nomeProduto + " | " + quantidade + " | " + valorDeVenda + "\n");
+                }
 
-        // Lê os arquivos de estoque para remover lotes com estoque 0
-        File dirEstoque = new File(dir.getDirEstoque());
-        File[] arquivosProdutos = dirEstoque.listFiles((dir, name) -> name.endsWith(".txt"));
+                // Lê os arquivos de estoque para remover lotes com estoque 0
+                File dirEstoque = new File(dir.getDirEstoque());
+                File[] arquivosProdutos = dirEstoque.listFiles((dir, name) -> name.endsWith(".txt"));
 
-        if (arquivosProdutos != null) {
-            for (File arquivoProduto : arquivosProdutos) {
-                BufferedReader reader = new BufferedReader(new FileReader(arquivoProduto));
-                StringBuilder conteudoArquivo = new StringBuilder();
-                StringBuilder loteAtual = new StringBuilder();
-                String linha;
-                boolean loteComEstoqueZero = false;
+                if (arquivosProdutos != null) {
+                    for (File arquivoProduto : arquivosProdutos) {
+                        BufferedReader reader = new BufferedReader(new FileReader(arquivoProduto));
+                        StringBuilder conteudoArquivo = new StringBuilder();
+                        StringBuilder loteAtual = new StringBuilder();
+                        String linha;
+                        boolean loteComEstoqueZero = false;
 
-                while ((linha = reader.readLine()) != null) {
-                    if (linha.startsWith("Estoque:")) {
-                        int quantidadeAtual = Integer.parseInt(linha.substring("Estoque:".length()).trim());
-                        loteComEstoqueZero = (quantidadeAtual == 0);
-                    }
+                        while ((linha = reader.readLine()) != null) {
+                            if (linha.startsWith("Estoque:")) {
+                                int quantidadeAtual = Integer.parseInt(linha.substring("Estoque:".length()).trim());
+                                loteComEstoqueZero = (quantidadeAtual == 0);
+                            }
 
-                    // Apenas adiciona linhas se o lote não estiver marcado como estoque zero
-                    if (!loteComEstoqueZero) {
-                        loteAtual.append(linha).append("\n");
-                    }
+                            // Apenas adiciona linhas se o lote não estiver marcado como estoque zero
+                            if (!loteComEstoqueZero) {
+                                loteAtual.append(linha).append("\n");
+                            }
 
-                    // Quando encontramos o final do lote, decidimos se ele será mantido ou não
-                    if (linha.startsWith("Data e Hora de Cadastro:")) {
-                        if (!loteComEstoqueZero) {
-                            conteudoArquivo.append(loteAtual);
+                            // Quando encontramos o final do lote, decidimos se ele será mantido ou não
+                            if (linha.startsWith("Data e Hora de Cadastro:")) {
+                                if (!loteComEstoqueZero) {
+                                    conteudoArquivo.append(loteAtual);
+                                }
+                                loteAtual.setLength(0); // Limpa para o próximo lote
+                                loteComEstoqueZero = false; // Reseta para o próximo lote
+                            }
                         }
-                        loteAtual.setLength(0); // Limpa para o próximo lote
-                        loteComEstoqueZero = false; // Reseta para o próximo lote
+                        reader.close();
+
+                        // Sobrescreve o arquivo com o novo conteúdo, removendo lotes inválidos
+                        BufferedWriter writerProduto = new BufferedWriter(new FileWriter(arquivoProduto));
+                        writerProduto.write(conteudoArquivo.toString());
+                        writerProduto.close();
+
+                        System.out.println("[" + dataHora + "] - [TelaVendas.java] - Lotes com estoque zero removidos do produto: " + arquivoProduto.getName());
                     }
                 }
-                reader.close();
 
-                // Sobrescreve o arquivo com o novo conteúdo, removendo lotes inválidos
-                BufferedWriter writerProduto = new BufferedWriter(new FileWriter(arquivoProduto));
-                writerProduto.write(conteudoArquivo.toString());
-                writerProduto.close();
+                // Fecha o arquivo do histórico de compras
+                writer.close();
 
-                System.out.println("[" + dataHora + "] - [TelaVendas.java] - Lotes com estoque zero removidos do produto: " + arquivoProduto.getName());
+                // Limpa a tabela após registrar
+                modeloTabela.setRowCount(0);
+                campoTipocliente.setSelectedItem("");
+                campoFuncionario.setSelectedItem("");
+                campoTotalDaCompra.setText("R$ 00,00");
+                campoFormaDePagamento.setSelectedItem("");
+                campoDesconto.setText("000");
+                campoId.setText("000");
+                campoQtn.setText("000");
+
+                System.out.println("[" + dataHora + "] - [TelaVendas.java] - Venda cadastrada em " + arquivoHistorico.getName());
+                System.out.println("[" + dataHora + "] - [TelaVendas.java] - Venda feita e cadastrada com sucesso!");
+
+                tir.exibirAvisoTemporario(lCompraFinalizada);
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        }
-
-        // Fecha o arquivo do histórico de compras
-        writer.close();
-
-        // Limpa a tabela após registrar
-        modeloTabela.setRowCount(0);
-        campoTipocliente.setSelectedItem("");
-        campoFuncionario.setSelectedItem("");
-        campoTotalDaCompra.setText("R$ 00,00");
-        campoFormaDePagamento.setSelectedItem("");
-        campoDesconto.setText("000");
-        campoId.setText("000");
-        campoQtn.setText("000");
-
-        System.out.println("[" + dataHora + "] - [TelaVendas.java] - Venda cadastrada em " + arquivoHistorico.getName());
-        System.out.println("[" + dataHora + "] - [TelaVendas.java] - Venda feita e cadastrada com sucesso!");
-
-        tir.exibirAvisoTemporario(lCompraFinalizada);
-    } catch (IOException ex) {
-        ex.printStackTrace();
-    }
-});
-
+        });
 
         bCancelarCompra.addActionListener(e -> {
             lfaltaDeDados.setVisible(false);
@@ -616,7 +617,6 @@ class TelaVendas extends JPanel {
             lCompraFinalizada.setVisible(false);
             lProdutoAdicionado.setVisible(false);
             lIdOuQtnVazio.setVisible(false);
-            lDescontoAplicado.setVisible(false);
 
             // Percorrer as linhas da tabela e processar cada item
             for (int i = 0; i < modeloTabela.getRowCount(); i++) {
@@ -719,137 +719,92 @@ class TelaVendas extends JPanel {
     }
 
     private void removerProduto() throws IOException {
-        relerArquivosDeEstoque();
+    relerArquivosDeEstoque();
 
-        // 1. Valida se o campo de ID e quantidade está vazio ou em "000"
-        String id = campoId.getText().trim();
-        String qtnStr = campoQtn.getText().trim();
+    // 1. Valida se o campo de ID e quantidade está vazio ou em "000"
+    String id = campoId.getText().trim();
+    String qtnStr = campoQtn.getText().trim();
 
-        if (id.isEmpty() || qtnStr.isEmpty() || id.equals("000") || qtnStr.equals("000")) {
-            System.out.println("ERRO: O campo ID ou Quantidade está vazio ou contém '000'.");
-            return; // Não deixa prosseguir
-        }
-
-        // 2. Procura o ID na tabela
-        int linhaEncontrada = -1;
-        String idTabela = "";
-        int quantidadeNaTabela = 0;
-        String loteTabela = "";
-
-        for (int i = 0; i < modeloTabela.getRowCount(); i++) {
-            idTabela = modeloTabela.getValueAt(i, 0).toString(); // Obtém o ID da tabela (índice 0)
-            if (idTabela.equals(id)) {
-                linhaEncontrada = i;
-                String quantidadeNaTabelaStr = modeloTabela.getValueAt(i, 2).toString(); // Coluna da quantidade (índice 2)
-                if (isNumeric(quantidadeNaTabelaStr)) {
-                    quantidadeNaTabela = Integer.parseInt(quantidadeNaTabelaStr);
-                } else {
-                    System.out.println("ERRO: Quantidade inválida na tabela.");
-                    return;
-                }
-                loteTabela = modeloTabela.getValueAt(i, 4).toString(); // Coluna do lote (índice 4)
-                break;
-            }
-        }
-
-        if (linhaEncontrada == -1) {
-            System.out.println("ERRO: Produto com ID " + id + " não encontrado na tabela.");
-            return; // Não deixa prosseguir
-        } else {
-            System.out.println("Produto com ID " + id + " encontrado na tabela.");
-        }
-
-        // 3. Puxa os dados da tabela (ID, quantidade e lote)
-        System.out.println("Dados puxados da tabela:");
-        System.out.println("ID: " + idTabela);
-        System.out.println("Quantidade: " + quantidadeNaTabela);
-        System.out.println("Lote: " + loteTabela);
-
-        // 4. Entra no arquivo do produto e identifica o lote correto
-        File arquivoProduto = new File(dir.getDirEstoque(), id + ".txt");
-
-        if (!arquivoProduto.exists()) {
-            System.out.println("ERRO: Arquivo do produto não encontrado: " + id);
-            return; // Não deixa prosseguir
-        }
-
-        // Atualizar o estoque do lote correto
-        List<String> linhasArquivo = new ArrayList<>();
-        boolean estoqueAtualizado = false;
-        int estoqueAtualNoArquivo = 0;  // Para armazenar o estoque atual no arquivo
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivoProduto))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                if (linha.startsWith("Lote:") && linha.contains(loteTabela)) {
-                    // Encontramos o lote correspondente, agora verificar o estoque
-                    while ((linha = reader.readLine()) != null && !linha.startsWith("Lote:")) {
-                        if (linha.startsWith("Estoque:")) {
-                            estoqueAtualNoArquivo = Integer.parseInt(linha.substring("Estoque:".length()).trim());
-
-                            int novaQuantidade = estoqueAtualNoArquivo + quantidadeNaTabela;
-
-                            // Atualiza o estoque no arquivo
-                            atualizarQuantidadeNoArquivo1(arquivoProduto, novaQuantidade);
-                            estoqueAtualizado = true;
-                            break;
-                        }
-                    }
-                }
-                linhasArquivo.add(linha); // Continuar lendo as linhas
-            }
-        }
-
-        if (!estoqueAtualizado) {
-            System.out.println("ERRO: Não foi possível atualizar o estoque.");
-            return; // Não deixa prosseguir
-        }
-
-        System.out.println("Estoque atualizado com sucesso.");
-
-        // 4. Remover a linha do produto na tabela após atualizar o estoque
-        modeloTabela.removeRow(linhaEncontrada);
-        System.out.println("Produto removido da tabela.");
-
-        // Zera os campos de ID e quantidade
-        campoId.setText("");
-        campoQtn.setText("");
-
-        campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
-        System.out.println("Campos zerados e valor total recalculado.");
+    if (id.isEmpty() || qtnStr.isEmpty() || id.equals("000") || qtnStr.equals("000")) {
+        System.out.println("ERRO: O campo ID ou Quantidade está vazio ou contém '000'.");
+        return; // Não deixa prosseguir
     }
 
-// Método para atualizar a quantidade no arquivo
-    private void atualizarQuantidadeNoArquivo1(File arquivo, int novaQuantidade) throws IOException {
-        // Lê o conteúdo do arquivo
-        List<String> linhas = Files.readAllLines(arquivo.toPath(), StandardCharsets.UTF_8);
+    // 2. Procura o ID na tabela
+    int linhaEncontrada = -1;
+    String idTabela = "";
+    int quantidadeNaTabela = 0;
 
-        // Mostra as linhas do arquivo para ver o que estamos lendo
-        System.out.println("Linhas lidas do arquivo:");
-        for (String l : linhas) {
-            System.out.println(l);
-        }
-
-        // Atualiza a linha de estoque com a nova quantidade
-        boolean estoqueAtualizado = false;
-        for (int i = 0; i < linhas.size(); i++) {
-            if (linhas.get(i).startsWith("Estoque:")) {
-                // Substitui a linha de estoque com a nova quantidade
-                linhas.set(i, "Estoque: " + novaQuantidade);
-                estoqueAtualizado = true;
-                break; // Sai do loop após encontrar e atualizar a linha
+    for (int i = 0; i < modeloTabela.getRowCount(); i++) {
+        idTabela = modeloTabela.getValueAt(i, 0).toString(); // Obtém o ID da tabela (índice 0)
+        if (idTabela.equals(id)) {
+            linhaEncontrada = i;
+            String quantidadeNaTabelaStr = modeloTabela.getValueAt(i, 2).toString(); // Coluna da quantidade (índice 2)
+            if (isNumeric(quantidadeNaTabelaStr)) {
+                quantidadeNaTabela = Integer.parseInt(quantidadeNaTabelaStr);
+            } else {
+                System.out.println("ERRO: Quantidade inválida na tabela.");
+                return;
             }
-        }
-
-        // Se o estoque foi atualizado, escreve de volta para o arquivo
-        if (estoqueAtualizado) {
-            System.out.println("Atualizando o estoque no arquivo...");
-            Files.write(arquivo.toPath(), linhas, StandardCharsets.UTF_8);
-            System.out.println("Estoque atualizado com sucesso!");
-        } else {
-            System.out.println("Erro ao atualizar o estoque: estoque não encontrado no arquivo.");
+            break;
         }
     }
+
+    if (linhaEncontrada == -1) {
+        System.out.println("ERRO: Produto com ID " + id + " não encontrado na tabela.");
+        return; // Não deixa prosseguir
+    } else {
+        System.out.println("Produto com ID " + id + " encontrado na tabela.");
+    }
+
+    // 3. Puxa os dados da tabela (ID e quantidade)
+    System.out.println("Dados puxados da tabela:");
+    System.out.println("ID: " + idTabela);
+    System.out.println("Quantidade na Tabela: " + quantidadeNaTabela);
+
+    // 4. Entra no arquivo do produto e utiliza a linha 3 para alterar o estoque
+    File arquivoProduto = new File(dir.getDirEstoque(), id + ".txt");
+
+    if (!arquivoProduto.exists()) {
+        System.out.println("ERRO: Arquivo do produto não encontrado: " + id);
+        return;
+    }
+
+    List<String> linhasArquivo = Files.readAllLines(arquivoProduto.toPath(), StandardCharsets.UTF_8);
+
+    if (linhasArquivo.size() < 3) {
+        System.out.println("ERRO: Arquivo do produto não possui linhas suficientes para alterar o estoque.");
+        return;
+    }
+
+    // Atualiza o estoque na linha 3 do arquivo
+    String linhaEstoque = linhasArquivo.get(2);
+    if (linhaEstoque.startsWith("Estoque:")) {
+        int estoqueAtualNoArquivo = Integer.parseInt(linhaEstoque.substring("Estoque:".length()).trim());
+        int novaQuantidade = estoqueAtualNoArquivo + quantidadeNaTabela; // Atualiza o estoque
+        linhasArquivo.set(2, "Estoque: " + novaQuantidade);
+        System.out.println("Estoque atualizado na linha 3 do arquivo.");
+    } else {
+        System.out.println("ERRO: Linha 3 do arquivo não contém a palavra 'Estoque:'.");
+        return;
+    }
+
+    // Escreve as linhas atualizadas de volta no arquivo
+    Files.write(arquivoProduto.toPath(), linhasArquivo, StandardCharsets.UTF_8);
+    System.out.println("Estoque atualizado com sucesso.");
+
+    // 5. Remover a linha do produto na tabela após atualizar o estoque
+    modeloTabela.removeRow(linhaEncontrada);
+    System.out.println("Produto removido da tabela.");
+
+    // Zera os campos de ID e quantidade
+    campoId.setText("000");
+    campoQtn.setText("000");
+
+    campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
+    System.out.println("Campos zerados e valor total recalculado.");
+}
+
 
 // Método para verificar se uma string é numérica
     private boolean isNumeric(String str) {
@@ -935,10 +890,14 @@ class TelaVendas extends JPanel {
         if (desconto > 0) {
             total -= (total * desconto / 100); // Aplica o desconto
             lDescontoAplicado.setVisible(true);
+            DecimalFormat df = new DecimalFormat("###,##0.00");
         }
 
-        // Formata o total com 2 casas decimais
         DecimalFormat df = new DecimalFormat("###,##0.00");
+
+        // Atualiza o texto do JLabel com o valor do desconto aplicado
+        lDescontoAplicado.setText("- Desconto de " + desconto + "% aplicado!");
+
         return Double.parseDouble(df.format(total).replace(",", "."));
     }
 }
