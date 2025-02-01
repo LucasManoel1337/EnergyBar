@@ -209,28 +209,78 @@ class TelaRelatorios extends JPanel {
     }
 
     public static double somarComprasDoDia() throws IOException {
-        // Obter a data do sistema no formato yyyyMMdd
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String dataAtual = sdf.format(new Date());
+    // Obter a data do sistema no formato dd-MM-yyyy
+    SimpleDateFormat sdfData = new SimpleDateFormat("dd-MM-yyyy");
+    String dataAtual = sdfData.format(new Date());
 
-        // Diretorio onde os arquivos de compras estão armazenados
-        File diretorio = new File("Dados/Compras");
+    // Diretorio onde os arquivos de compras estão armazenados
+    File diretorio = new File("Dados/Compras");
 
-        // Verificar se o diretório existe
-        if (!diretorio.exists() || !diretorio.isDirectory()) {
-            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+    // Verificar se o diretório existe
+    if (!diretorio.exists() || !diretorio.isDirectory()) {
+        throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+    }
+
+    // Variável para acumular o valor total das compras
+    double total = 0;
+
+    // Listar todos os arquivos no diretório
+    File[] arquivos = diretorio.listFiles();
+    if (arquivos != null) {
+        for (File arquivo : arquivos) {
+            // Verificar se o arquivo é um arquivo com nome no formato HH-mm-ss - dd-MM-yyyy.txt
+            String nomeArquivo = arquivo.getName();
+            if (nomeArquivo.length() >= 20 && nomeArquivo.substring(11, 21).equals(dataAtual)) {
+                // Ler o arquivo e procurar a linha que contém o valor
+                try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                    String linha;
+                    while ((linha = br.readLine()) != null) {
+                        if (linha.startsWith("Valor Total da Compra: R$")) {
+                            // Extrair o valor e somar ao total
+                            String valorStr = linha.substring(25).trim().replace(",", ".");
+                            total += Double.parseDouble(valorStr);
+                            break;
+                        }
+                    }
+                }
+            }
         }
+    }
+    return total;
+}
 
-        // Variável para acumular o valor total das compras
-        double total = 0;
 
-        // Listar todos os arquivos no diretório
-        File[] arquivos = diretorio.listFiles();
-        if (arquivos != null) {
-            for (File arquivo : arquivos) {
-                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
-                String nomeArquivo = arquivo.getName();
-                if (nomeArquivo.length() >= 15 && nomeArquivo.substring(0, 8).equals(dataAtual)) {
+    public static double somarComprasUltimos7Dias() throws IOException {
+    // Obter a data do sistema no formato dd-MM-yyyy
+    SimpleDateFormat sdfData = new SimpleDateFormat("dd-MM-yyyy");
+    String dataAtual = sdfData.format(new Date());
+
+    // Obter a data do sistema e calcular a data dos últimos 7 dias
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.DAY_OF_YEAR, -7);
+    String dataLimite = sdfData.format(calendar.getTime());
+
+    // Diretorio onde os arquivos de compras estão armazenados
+    File diretorio = new File("Dados/Compras");
+
+    // Verificar se o diretório existe
+    if (!diretorio.exists() || !diretorio.isDirectory()) {
+        throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+    }
+
+    // Variável para acumular o valor total das compras
+    double total = 0;
+
+    // Listar todos os arquivos no diretório
+    File[] arquivos = diretorio.listFiles();
+    if (arquivos != null) {
+        for (File arquivo : arquivos) {
+            // Verificar se o arquivo é um arquivo com nome no formato HH-mm-ss - dd-MM-yyyy.txt
+            String nomeArquivo = arquivo.getName();
+            if (nomeArquivo.length() >= 20) {
+                // Pegar a data do arquivo (formato dd-MM-yyyy) e comparar com o intervalo dos últimos 7 dias
+                String dataArquivo = nomeArquivo.substring(11, 21);
+                if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
                     // Ler o arquivo e procurar a linha que contém o valor
                     try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
                         String linha;
@@ -246,109 +296,59 @@ class TelaRelatorios extends JPanel {
                 }
             }
         }
-        return total;
     }
 
-    public static double somarComprasUltimos7Dias() throws IOException {
-        // Obter a data do sistema no formato yyyyMMdd
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String dataAtual = sdf.format(new Date());
-
-        // Obter a data do sistema e calcular a data dos últimos 7 dias
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -7);
-        String dataLimite = sdf.format(calendar.getTime());
-
-        // Diretorio onde os arquivos de compras estão armazenados
-        File diretorio = new File("Dados/Compras");
-
-        // Verificar se o diretório existe
-        if (!diretorio.exists() || !diretorio.isDirectory()) {
-            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
-        }
-
-        // Variável para acumular o valor total das compras
-        double total = 0;
-
-        // Listar todos os arquivos no diretório
-        File[] arquivos = diretorio.listFiles();
-        if (arquivos != null) {
-            for (File arquivo : arquivos) {
-                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
-                String nomeArquivo = arquivo.getName();
-                if (nomeArquivo.length() >= 15) {
-                    // Pegar a data do arquivo (formato yyyyMMdd) e comparar com o intervalo dos últimos 7 dias
-                    String dataArquivo = nomeArquivo.substring(0, 8);
-                    if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
-                        // Ler o arquivo e procurar a linha que contém o valor
-                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
-                            String linha;
-                            while ((linha = br.readLine()) != null) {
-                                if (linha.startsWith("Valor Total da Compra: R$")) {
-                                    // Extrair o valor e somar ao total
-                                    String valorStr = linha.substring(25).trim().replace(",", ".");
-                                    total += Double.parseDouble(valorStr);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return total;
-    }
+    return total;
+}
 
     public static double somarComprasUltimos30Dias() throws IOException {
-        // Obter a data do sistema no formato yyyyMMdd
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String dataAtual = sdf.format(new Date());
+    // Obter a data do sistema no formato dd-MM-yyyy
+    SimpleDateFormat sdfData = new SimpleDateFormat("dd-MM-yyyy");
+    String dataAtual = sdfData.format(new Date());
 
-        // Obter a data do sistema e calcular a data dos últimos 30 dias
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -30);
-        String dataLimite = sdf.format(calendar.getTime());
+    // Obter a data do sistema e calcular a data dos últimos 30 dias
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.DAY_OF_YEAR, -30);
+    String dataLimite = sdfData.format(calendar.getTime());
 
-        // Diretorio onde os arquivos de compras estão armazenados
-        File diretorio = new File("Dados/Compras");
+    // Diretorio onde os arquivos de compras estão armazenados
+    File diretorio = new File("Dados/Compras");
 
-        // Verificar se o diretório existe
-        if (!diretorio.exists() || !diretorio.isDirectory()) {
-            throw new IOException("Diretório 'Dados/Compras' não encontrado.");
-        }
+    // Verificar se o diretório existe
+    if (!diretorio.exists() || !diretorio.isDirectory()) {
+        throw new IOException("Diretório 'Dados/Compras' não encontrado.");
+    }
 
-        // Variável para acumular o valor total das compras
-        double total = 0;
+    // Variável para acumular o valor total das compras
+    double total = 0;
 
-        // Listar todos os arquivos no diretório
-        File[] arquivos = diretorio.listFiles();
-        if (arquivos != null) {
-            for (File arquivo : arquivos) {
-                // Verificar se o arquivo é um arquivo com nome no formato yyyyMMdd hhmmss
-                String nomeArquivo = arquivo.getName();
-                if (nomeArquivo.length() >= 15) {
-                    // Pegar a data do arquivo (formato yyyyMMdd) e comparar com o intervalo dos últimos 30 dias
-                    String dataArquivo = nomeArquivo.substring(0, 8);
-                    if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
-                        // Ler o arquivo e procurar a linha que contém o valor
-                        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
-                            String linha;
-                            while ((linha = br.readLine()) != null) {
-                                if (linha.startsWith("Valor Total da Compra: R$")) {
-                                    // Extrair o valor e somar ao total
-                                    String valorStr = linha.substring(25).trim().replace(",", ".");
-                                    total += Double.parseDouble(valorStr);
-                                    break;
-                                }
+    // Listar todos os arquivos no diretório
+    File[] arquivos = diretorio.listFiles();
+    if (arquivos != null) {
+        for (File arquivo : arquivos) {
+            // Verificar se o arquivo é um arquivo com nome no formato HH-mm-ss - dd-MM-yyyy.txt
+            String nomeArquivo = arquivo.getName();
+            if (nomeArquivo.length() >= 20) {
+                // Pegar a data do arquivo (formato dd-MM-yyyy) e comparar com o intervalo dos últimos 30 dias
+                String dataArquivo = nomeArquivo.substring(11, 21);
+                if (dataArquivo.compareTo(dataLimite) >= 0 && dataArquivo.compareTo(dataAtual) <= 0) {
+                    // Ler o arquivo e procurar a linha que contém o valor
+                    try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                        String linha;
+                        while ((linha = br.readLine()) != null) {
+                            if (linha.startsWith("Valor Total da Compra: R$")) {
+                                // Extrair o valor e somar ao total
+                                String valorStr = linha.substring(25).trim().replace(",", ".");
+                                total += Double.parseDouble(valorStr);
+                                break;
                             }
                         }
                     }
                 }
             }
         }
-
-        return total;
     }
 
+    return total;
+}
 }
