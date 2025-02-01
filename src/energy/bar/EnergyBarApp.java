@@ -37,7 +37,7 @@ public class EnergyBarApp {
         return telaProdutos;
     }
 
-    private String versaoPrograma = "0.4.6";
+    private String versaoPrograma = "0.5.0";
     private JLabel labelVersao;
 
     private JFrame janela;
