@@ -444,9 +444,6 @@ class TelaVendas extends JPanel {
                 }
                 reader.close();
 
-                // Exibe no console qual lote está sendo utilizado
-                System.out.println("Lote utilizado: " + loteAntigo);
-
                 // Verifica se há quantidade suficiente no estoque
                 if (quantidadeDesejada > quantidadeLoteAntigo) {
                     lProdutoSemEstoque.setText("Produto com ID " + id + " está sem estoque no lote mais velho");
@@ -644,100 +641,107 @@ class TelaVendas extends JPanel {
 
         // Se o estoque foi atualizado, escreve de volta para o arquivo
         if (estoqueAtualizado) {
-            System.out.println("Atualizando o estoque no arquivo...");
             Files.write(arquivo.toPath(), linhas, StandardCharsets.UTF_8);
-            System.out.println("Estoque atualizado com sucesso!");
         } else {
-            System.out.println("Erro ao atualizar o estoque: estoque não encontrado no arquivo.");
         }
     }
 
     private void removerProduto() throws IOException {
-        relerArquivosDeEstoque();
+    relerArquivosDeEstoque();
 
-        // 1. Valida se o campo de ID e quantidade está vazio ou em "000"
-        String id = campoId.getText().trim();
-        String qtnStr = campoQtn.getText().trim();
+    // 1. Valida se o campo de ID e quantidade está vazio ou em "000"
+    String id = campoId.getText().trim();
+    String qtnStr = campoQtn.getText().trim();
 
-        if (id.isEmpty() || qtnStr.isEmpty() || id.equals("000") || qtnStr.equals("000")) {
-            System.out.println("ERRO: O campo ID ou Quantidade está vazio ou contém '000'.");
-            return; // Não deixa prosseguir
-        }
-
-        // 2. Procura o ID na tabela
-        int linhaEncontrada = -1;
-        String idTabela = "";
-        int quantidadeNaTabela = 0;
-
-        for (int i = 0; i < modeloTabela.getRowCount(); i++) {
-            idTabela = modeloTabela.getValueAt(i, 0).toString(); // Obtém o ID da tabela (índice 0)
-            if (idTabela.equals(id)) {
-                linhaEncontrada = i;
-                String quantidadeNaTabelaStr = modeloTabela.getValueAt(i, 2).toString(); // Coluna da quantidade (índice 2)
-                if (isNumeric(quantidadeNaTabelaStr)) {
-                    quantidadeNaTabela = Integer.parseInt(quantidadeNaTabelaStr);
-                } else {
-                    System.out.println("ERRO: Quantidade inválida na tabela.");
-                    return;
-                }
-                break;
-            }
-        }
-
-        if (linhaEncontrada == -1) {
-            System.out.println("ERRO: Produto com ID " + id + " não encontrado na tabela.");
-            return; // Não deixa prosseguir
-        } else {
-            System.out.println("Produto com ID " + id + " encontrado na tabela.");
-        }
-
-        // 3. Puxa os dados da tabela (ID e quantidade)
-        System.out.println("Dados puxados da tabela:");
-        System.out.println("ID: " + idTabela);
-        System.out.println("Quantidade na Tabela: " + quantidadeNaTabela);
-
-        // 4. Entra no arquivo do produto e utiliza a linha 3 para alterar o estoque
-        File arquivoProduto = new File(dir.getDirEstoque(), id + ".txt");
-
-        if (!arquivoProduto.exists()) {
-            System.out.println("ERRO: Arquivo do produto não encontrado: " + id);
-            return;
-        }
-
-        List<String> linhasArquivo = Files.readAllLines(arquivoProduto.toPath(), StandardCharsets.UTF_8);
-
-        if (linhasArquivo.size() < 3) {
-            System.out.println("ERRO: Arquivo do produto não possui linhas suficientes para alterar o estoque.");
-            return;
-        }
-
-        // Atualiza o estoque na linha 3 do arquivo
-        String linhaEstoque = linhasArquivo.get(2);
-        if (linhaEstoque.startsWith("Estoque:")) {
-            int estoqueAtualNoArquivo = Integer.parseInt(linhaEstoque.substring("Estoque:".length()).trim());
-            int novaQuantidade = estoqueAtualNoArquivo + quantidadeNaTabela; // Atualiza o estoque
-            linhasArquivo.set(2, "Estoque: " + novaQuantidade);
-            System.out.println("Estoque atualizado na linha 3 do arquivo.");
-        } else {
-            System.out.println("ERRO: Linha 3 do arquivo não contém a palavra 'Estoque:'.");
-            return;
-        }
-
-        // Escreve as linhas atualizadas de volta no arquivo
-        Files.write(arquivoProduto.toPath(), linhasArquivo, StandardCharsets.UTF_8);
-        System.out.println("Estoque atualizado com sucesso.");
-
-        // 5. Remover a linha do produto na tabela após atualizar o estoque
-        modeloTabela.removeRow(linhaEncontrada);
-        System.out.println("Produto removido da tabela.");
-
-        // Zera os campos de ID e quantidade
-        campoId.setText("000");
-        campoQtn.setText("000");
-
-        campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
-        System.out.println("Campos zerados e valor total recalculado.");
+    if (id.isEmpty() || qtnStr.isEmpty() || id.equals("000") || qtnStr.equals("000")) {
+        System.out.println("ERRO: O campo ID ou Quantidade está vazio ou contém '000'.");
+        return; // Não deixa prosseguir
     }
+
+    // 2. Procura o ID na tabela
+    int linhaEncontrada = -1;
+    String idTabela = "";
+    int quantidadeNaTabela = 0;
+    int quantidadeRemover = Integer.parseInt(qtnStr);
+
+    for (int i = 0; i < modeloTabela.getRowCount(); i++) {
+        idTabela = modeloTabela.getValueAt(i, 0).toString(); // Obtém o ID da tabela (índice 0)
+        if (idTabela.equals(id)) {
+            linhaEncontrada = i;
+            String quantidadeNaTabelaStr = modeloTabela.getValueAt(i, 2).toString(); // Coluna da quantidade (índice 2)
+            if (isNumeric(quantidadeNaTabelaStr)) {
+                quantidadeNaTabela = Integer.parseInt(quantidadeNaTabelaStr);
+            } else {
+                System.out.println("ERRO: Quantidade inválida na tabela.");
+                return;
+            }
+            break;
+        }
+    }
+
+    if (linhaEncontrada == -1) {
+        System.out.println("ERRO: Produto com ID " + id + " não encontrado na tabela.");
+        return; // Não deixa prosseguir
+    } else if (quantidadeRemover > quantidadeNaTabela) {
+        System.out.println("ERRO: Quantidade a remover é maior do que a quantidade na tabela.");
+        return; // Não deixa prosseguir
+    } else {
+        System.out.println("Produto com ID " + id + " encontrado na tabela.");
+    }
+
+    // 3. Puxa os dados da tabela (ID e quantidade)
+    System.out.println("Dados puxados da tabela:");
+    System.out.println("ID: " + idTabela);
+    System.out.println("Quantidade na Tabela: " + quantidadeNaTabela);
+
+    // 4. Entra no arquivo do produto e utiliza a linha 3 para alterar o estoque
+    File arquivoProduto = new File(dir.getDirEstoque(), id + ".txt");
+
+    if (!arquivoProduto.exists()) {
+        System.out.println("ERRO: Arquivo do produto não encontrado: " + id);
+        return;
+    }
+
+    List<String> linhasArquivo = Files.readAllLines(arquivoProduto.toPath(), StandardCharsets.UTF_8);
+
+    if (linhasArquivo.size() < 3) {
+        System.out.println("ERRO: Arquivo do produto não possui linhas suficientes para alterar o estoque.");
+        return;
+    }
+
+    // Atualiza o estoque na linha 3 do arquivo
+    String linhaEstoque = linhasArquivo.get(2);
+    if (linhaEstoque.startsWith("Estoque:")) {
+        int estoqueAtualNoArquivo = Integer.parseInt(linhaEstoque.substring("Estoque:".length()).trim());
+        int novaQuantidade = estoqueAtualNoArquivo + quantidadeRemover; // Atualiza o estoque
+        linhasArquivo.set(2, "Estoque: " + novaQuantidade);
+        System.out.println("Estoque atualizado na linha 3 do arquivo.");
+    } else {
+        System.out.println("ERRO: Linha 3 do arquivo não contém a palavra 'Estoque:'.");
+        return;
+    }
+
+    // Escreve as linhas atualizadas de volta no arquivo
+    Files.write(arquivoProduto.toPath(), linhasArquivo, StandardCharsets.UTF_8);
+    System.out.println("Estoque atualizado com sucesso.");
+
+    // 5. Atualizar a quantidade na tabela ou remover a linha se a quantidade for zero
+    int quantidadeRestante = quantidadeNaTabela - quantidadeRemover;
+    if (quantidadeRestante > 0) {
+        modeloTabela.setValueAt(quantidadeRestante, linhaEncontrada, 2); // Atualiza a quantidade na tabela
+        System.out.println("Quantidade atualizada na tabela para o produto com ID " + id + ".");
+    } else {
+        modeloTabela.removeRow(linhaEncontrada); // Remove a linha da tabela se a quantidade for zero
+        System.out.println("Produto removido da tabela.");
+    }
+
+    // Zera os campos de ID e quantidade
+    campoId.setText("000");
+    campoQtn.setText("000");
+
+    campoTotalDaCompra.setText("R$ " + calcularTotalCompra());
+    System.out.println("Campos zerados e valor total recalculado.");
+}
 
 // Método para verificar se uma string é numérica
     private boolean isNumeric(String str) {
